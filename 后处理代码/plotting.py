@@ -17,7 +17,7 @@ inputdata = []
 # for i in range(2**17):
 #     temp = random.gauss(5, .05)
 #     inputdata.append(temp)
-f = open('../数据/输入2.5mW量程0.1V-混合噪声.txt', 'r')
+f = open('../../数据/输入2.5mW量程0.1V-混合噪声.txt', 'r')
 for i in range(2**16):
         inputdata.append(int(f.readline()))
 inputdata = np.array(inputdata)
