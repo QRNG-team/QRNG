@@ -70,8 +70,9 @@ class Toeplitz:
         binned_data, bins = np.histogram(self.data, bins=2**self.bits-1)                              
         N, data = self._calculate_N()
         pmax = np.max(binned_data)/2**N 
-        min_ent = -np.log2(pmax)                                       
-        return min_ent                                                
+        min_ent = -np.log2(pmax)
+        #return 0.4 * min_ent
+        return min_ent
 
     def _output_length(self):  
         """ 
@@ -88,7 +89,7 @@ class Toeplitz:
         out_len = round(out_len)
         return out_len                                                 
 
-    def _toep_mat(self):
+    def _toep_mat(self, data_flat):
         """
         Constructs a random n x m binary Toeplitz matrix.
         
@@ -98,9 +99,17 @@ class Toeplitz:
             A random n x m binary Toeplitz matrix.
         """
         out_len = self._output_length()
-        row = np.random.randint(2, size=out_len)                        
-        col = np.random.randint(2, size=2**self.bits)
-        toep_mat = toeplitz(row, col)                                    
+        # row = np.random.randint(2, size=out_len)
+        # col = np.random.randint(2, size=2**self.bits)
+        row = []
+        for i in range(out_len):
+             row.append(data_flat[self.bits*2**self.bits + i])
+        row = np.array(row)
+        col = []
+        for i in range(2**self.bits):
+            col.append(data_flat[self.bits*2**self.bits + out_len + i])
+        row = np.array(row)
+        toep_mat = toeplitz(row, col)
         return toep_mat    
 
     def _dec_num_to_bin(self, data_pt, depth, bin_pts): 
@@ -141,14 +150,15 @@ class Toeplitz:
         binary_data = []
         for i in range(2**N):
             zeros = np.zeros(self.bits)
-            binary_data.append(self._dec_num_to_bin(data_digital[i], self.bits - 1, zeros))
             #binary_data.append(self._dec_num_to_bin(data[i] + 8192, self.bits - 1, zeros))
+            binary_data.append(self._dec_num_to_bin(data_digital[i], self.bits - 1, zeros))
+            #print(data_digital[i], self._dec_num_to_bin(data_digital[i], self.bits - 1, zeros))
         binary_data = np.reshape(binary_data, (2**N, self.bits))
         print(len(binary_data))
         bin_data_flat = binary_data.flatten()                                
         return bin_data_flat
 
-    def hash(self):
+    def hash(self, flag):
         """
         Performs the Toeplitz hashing.
 
@@ -161,7 +171,7 @@ class Toeplitz:
         out_len = self._output_length()
         data_flat = self._dec_list_to_bin()
         print(len(data_flat))
-        toep_mat = self._toep_mat()
+        toep_mat = self._toep_mat(data_flat)
         split = np.array_split(data_flat, self.bits * 2**(N-self.bits))
         #print(len(split))
         data_hashed = np.dot(toep_mat, split[0]) % 2
@@ -171,12 +181,15 @@ class Toeplitz:
         #print(len(data_hashed))
         data_hashed = np.array_split(data_hashed, out_len * 2**(N-self.bits))
         #print(len(data_hashed))
-        decimal = []                                                       
-        for index, sample in enumerate(data_hashed): 
-            x = ''.join([str(int(elem)) for elem in sample])
-            decimal = np.append(decimal, int(x, 2))
-        #hashed_data = decimal[decimal != 254]
-        hashed_data = decimal
+        if flag:
+            decimal = []
+            for index, sample in enumerate(data_hashed):
+                x = ''.join([str(int(elem)) for elem in sample])
+                decimal = np.append(decimal, int(x, 2))
+            #hashed_data = decimal[decimal != 254]
+            hashed_data = decimal
+        else:
+            hashed_data = data_hashed
         return hashed_data 
    
 
