@@ -12,15 +12,6 @@ and after hashing. The data after hashing should be uniform.
 
 """
 
-inputdata = []
-
-# for i in range(2**17):
-#     temp = random.gauss(5, .05)
-#     inputdata.append(temp)
-f = open('../../数据/输入2.5mW量程0.1V-混合噪声.txt', 'r')
-for i in range(2**16):
-        inputdata.append(int(f.readline()))
-inputdata = np.array(inputdata)
 
 def plot_data(data, n):
         """ Bins up data and plots. """
@@ -35,9 +26,3 @@ def plot_data(data, n):
         plt.show()
         return binned_data, data_digital       
     
-
-t = ottoeplitz.Toeplitz(inputdata, 14)
-#plot_data(inputdata, 14)
-dist = t.hash()
-print(len(dist), len(dist)/len(inputdata))
-#plot_data(dist, 14)
