@@ -1,25 +1,24 @@
 import numpy as np
-import sp800_22_monobit_test
-import sp800_22_frequency_within_block_test
-import sp800_22_runs_test
-import sp800_22_longest_run_ones_in_a_block_test
-import sp800_22_binary_matrix_rank_test
-import sp800_22_dft_test
-import sp800_22_non_overlapping_template_matching_test
-import sp800_22_overlapping_template_matching_test
-import sp800_22_maurers_universal_test
-import sp800_22_linear_complexity_test
-import sp800_22_serial_test
-import sp800_22_approximate_entropy_test
-import sp800_22_cumulative_sums_test
-import sp800_22_random_excursion_test
-import sp800_22_random_excursion_variant_test
+
+from QRNGdetection import sp800_22_monobit_test
+from QRNGdetection import sp800_22_frequency_within_block_test
+from QRNGdetection import sp800_22_runs_test
+from QRNGdetection import sp800_22_longest_run_ones_in_a_block_test
+from QRNGdetection import  sp800_22_binary_matrix_rank_test
+from QRNGdetection import sp800_22_dft_test
+from QRNGdetection import sp800_22_non_overlapping_template_matching_test
+from QRNGdetection import sp800_22_overlapping_template_matching_test
+from QRNGdetection import sp800_22_maurers_universal_test
+from QRNGdetection import sp800_22_linear_complexity_test
+from QRNGdetection import sp800_22_serial_test
+from QRNGdetection import sp800_22_approximate_entropy_test
+from QRNGdetection import sp800_22_cumulative_sums_test
+from QRNGdetection import sp800_22_random_excursion_test
+from QRNGdetection import sp800_22_random_excursion_variant_test
 
 
 
-
-
-def all():
+def all(results,bits):
     print('------------------------------------------------------')
     print('monobit_test')
     success, p, plist = sp800_22_monobit_test.monobit_test(bits)
@@ -37,7 +36,7 @@ def all():
     if plist != None:
         summary_p = str(min(plist))
     results.append(('monobit_test', summary_p, summary_result))
-
+    
     print('------------------------------------------------------')
     print('frequency_within_block_test')
     (success, p, plist) = sp800_22_frequency_within_block_test.frequency_within_block_test(bits)
@@ -305,9 +304,9 @@ if __name__ == "__main__":
     bits = [int(x) for x in nbits]
 
     results = list()
-    all()
+    all(results, bits)
     print('**************************************************************************')
-    f = open("2.5混合-改映射之后.txt", "w")
+    f = open("output1.txt", "w")
     for result in results:
         (summary_name, summary_p, summary_result) = result
         print(summary_name.ljust(40), summary_p.ljust(28), summary_result,file=f)

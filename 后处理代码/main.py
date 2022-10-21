@@ -3,14 +3,13 @@ import numpy as np
 import random
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import ottoeplitz
 import time
-from QRNGdetection import *
-
-
-# from QRNGdetection import sp800_22
-
+import sys
+sys.path.append('E:\\Project\\Python\\QRNG\\QRNGdetection')
+import QRNGdetection.sp800_22
+print("调用了QRNGdetection中的模块")
+print(sys.path)
 """ 
 Main program
 ======================
@@ -19,14 +18,15 @@ This file is the entry to the post-extractor program,
 which is responsible for removing noise and extracting truly random numbers using the toeplitz matrix
 
 """
-ori_route = 'E:/博一上/量子随机数/20221006-随机数熵源预实验'  # 原始数据文件路径
-filename = '输入1mW量程0.1V-混合噪声'  # 实验数据类型
-fin_route = 'E:/博一上/量子随机数/实验结果/预实验'  # 提取后数据文件路径
-input = []
-N = 14
+ori_route = 'E:/博一上/量子随机数/实验/第二次预实验/第二次预实验1019'  # 原始数据文件路径
+filename = '输入1.140dBm量程0.2V'  # 实验数据类型
+fin_route = 'E:/博一上/量子随机数/实验/第二次预实验/实验结果'  # 提取后数据文件路径
+input = []  #输入序列数据
+N = 14   #采样位数
+scale = 2 ** 20 + 20000    #输入数据规模
 
 with open(f'{ori_route}/{filename}.txt', mode='r') as fdata:
-    for i in range(2 ** 16 + 20000):
+    for i in range(scale):
         input.append(int(fdata.readline()))
 inputdata = np.array(input)
 # for i in range(2**19):
@@ -48,19 +48,27 @@ for subdist in dist1:
 runtime = end - start
 print('Running time: %.4f Seconds\n' % runtime)
 length = len(dist)
-outpara = open(f'{fin_route}/{filename}-后提取参数.txt', 'w+')
+outpara = open(f'{fin_route}/{filename}/{filename}-后提取参数-数据：{scale}.txt', 'w+')
 outpara.write('Running time: %.4f Seconds\n' % runtime)
 speed = length / (runtime * 1000)
 outpara.write('Speed: %.2f kbps\n' % speed)
 outpara.write('最小熵为： %.2f \n' % t.min_ent)
-output = open(f'{fin_route}/{filename}-后提取结果.txt', 'w')
+output = open(f'{fin_route}/{filename}/{filename}-后提取结果-数据：{scale}.txt', 'w')
 output.write(dist)
 
+
 # 检测
+test = ''
+f = open(f"{fin_route}/{filename}/{filename}-后提取结果-数据：{scale}.txt")
+for line in f.readlines():
+    line = line.strip()
+    test += line
+nbits = [v for v in test]
+bits = [int(x) for x in nbits]
 results = list()
-QRNGdetection.sp800_22.all()
+QRNGdetection.sp800_22.all(results,bits)
 print('**************************************************************************')
-f = open(f'{fin_route}/{filename}-检测结果', "w")
+f = open(f'{fin_route}/{filename}/{filename}-检测结果-数据：{scale}.txt', "w")
 for result in results:
     (summary_name, summary_p, summary_result) = result
     print(summary_name.ljust(40), summary_p.ljust(28), summary_result, file=f)
