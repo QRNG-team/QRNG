@@ -36,7 +36,7 @@ def all(results,bits):
     if plist != None:
         summary_p = str(min(plist))
     results.append(('monobit_test', summary_p, summary_result))
-    
+
     print('------------------------------------------------------')
     print('frequency_within_block_test')
     (success, p, plist) = sp800_22_frequency_within_block_test.frequency_within_block_test(bits)
@@ -165,7 +165,7 @@ def all(results,bits):
 
     print('------------------------------------------------------')
     print('maurers_universal_test')
-    (success, p, plist) = sp800_22_maurers_universal_test.maurers_universal_test(bits, 2, 4)
+    (success, p, plist) = sp800_22_maurers_universal_test.maurers_universal_test(bits, None, None)
     if success:
         print("  PASS")
         summary_result = "PASS"
@@ -183,7 +183,7 @@ def all(results,bits):
 
     print('------------------------------------------------------')
     print('linear_complexity_test')
-    (success, p, plist) = sp800_22_linear_complexity_test.linear_complexity_test(bits, 7)
+    (success, p, plist) = sp800_22_linear_complexity_test.linear_complexity_test(bits, 500)
     if success:
         print("  PASS")
         summary_result = "PASS"
