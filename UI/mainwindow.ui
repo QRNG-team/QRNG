@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1166</width>
+    <height>935</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>随机数发生器</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../source/ico/logo.png</normaloff>../source/ico/logo.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>3</horstretch>
+     <verstretch>2</verstretch>
+    </sizepolicy>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QScrollArea" name="scrollArea">
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOn</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOn</enum>
+          </property>
+          <property name="widgetResizable">
+           <bool>false</bool>
+          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents">
+           <property name="geometry">
+            <rect>
+             <x>-2176</x>
+             <y>0</y>
+             <width>5000</width>
+             <height>5000</height>
+            </rect>
+           </property>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QLabel" name="label">
+      <property name="font">
+       <font>
+        <family>楷体</family>
+        <pointsize>18</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>程序日志</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="logLayout">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QScrollArea" name="scrollArea_2">
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOn</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOn</enum>
+          </property>
+          <property name="widgetResizable">
+           <bool>false</bool>
+          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents_2">
+           <property name="geometry">
+            <rect>
+             <x>-20</x>
+             <y>-238</y>
+             <width>5000</width>
+             <height>5000</height>
+            </rect>
+           </property>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QProgressBar" name="progressBar">
+      <property name="value">
+       <number>24</number>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1166</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="Mfile">
+    <property name="title">
+     <string>文件</string>
+    </property>
+    <addaction name="open"/>
+    <addaction name="separator"/>
+    <addaction name="save"/>
+    <addaction name="setpage"/>
+    <addaction name="print"/>
+   </widget>
+   <widget class="QMenu" name="Mextractor">
+    <property name="title">
+     <string>提取</string>
+    </property>
+    <addaction name="runextract"/>
+    <addaction name="extractorset"/>
+   </widget>
+   <widget class="QMenu" name="Mdetection">
+    <property name="title">
+     <string>检测</string>
+    </property>
+    <addaction name="rundetection"/>
+    <addaction name="detectionset"/>
+   </widget>
+   <widget class="QMenu" name="Mentropy">
+    <property name="title">
+     <string>熵源</string>
+    </property>
+    <addaction name="entropyset"/>
+   </widget>
+   <widget class="QMenu" name="about">
+    <property name="title">
+     <string>关于</string>
+    </property>
+    <addaction name="aboutqrng"/>
+    <addaction name="aboutqt"/>
+   </widget>
+   <widget class="QMenu" name="Mshow">
+    <property name="title">
+     <string>展示</string>
+    </property>
+    <addaction name="show"/>
+    <addaction name="showset"/>
+   </widget>
+   <addaction name="Mfile"/>
+   <addaction name="Mextractor"/>
+   <addaction name="Mdetection"/>
+   <addaction name="Mentropy"/>
+   <addaction name="Mshow"/>
+   <addaction name="about"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="open"/>
+   <addaction name="save"/>
+   <addaction name="runextract"/>
+   <addaction name="rundetection"/>
+   <addaction name="show"/>
+  </widget>
+  <action name="open">
+   <property name="icon">
+    <iconset>
+     <normaloff>../source/ico/addfile.ico</normaloff>../source/ico/addfile.ico</iconset>
+   </property>
+   <property name="text">
+    <string>打开原始序列文件</string>
+   </property>
+  </action>
+  <action name="save">
+   <property name="icon">
+    <iconset>
+     <normaloff>../source/ico/save.png</normaloff>../source/ico/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>设置输出文件位置</string>
+   </property>
+  </action>
+  <action name="setpage">
+   <property name="icon">
+    <iconset>
+     <normaloff>../source/ico/设置.ico</normaloff>../source/ico/设置.ico</iconset>
+   </property>
+   <property name="text">
+    <string>页面设置</string>
+   </property>
+  </action>
+  <action name="print">
+   <property name="icon">
+    <iconset>
+     <normaloff>../source/ico/打印文件.png</normaloff>../source/ico/打印文件.png</iconset>
+   </property>
+   <property name="text">
+    <string>打印文件</string>
+   </property>
+  </action>
+  <action name="runextract">
+   <property name="icon">
+    <iconset>
+     <normaloff>../source/ico/start.png</normaloff>../source/ico/start.png</iconset>
+   </property>
+   <property name="text">
+    <string>运行提取</string>
+   </property>
+  </action>
+  <action name="extractorset">
+   <property name="text">
+    <string>提取设置</string>
+   </property>
+  </action>
+  <action name="rundetection">
+   <property name="icon">
+    <iconset>
+     <normaloff>../source/ico/play.ico</normaloff>../source/ico/play.ico</iconset>
+   </property>
+   <property name="text">
+    <string>运行检测</string>
+   </property>
+  </action>
+  <action name="detectionset">
+   <property name="text">
+    <string>检测设置</string>
+   </property>
+   <property name="iconText">
+    <string>检测设置</string>
+   </property>
+  </action>
+  <action name="entropyset">
+   <property name="text">
+    <string>熵源设置</string>
+   </property>
+  </action>
+  <action name="aboutqrng">
+   <property name="text">
+    <string>关于QRNG</string>
+   </property>
+  </action>
+  <action name="aboutqt">
+   <property name="text">
+    <string>关于Qt</string>
+   </property>
+  </action>
+  <action name="show">
+   <property name="icon">
+    <iconset>
+     <normaloff>../source/ico/运行.ico</normaloff>../source/ico/运行.ico</iconset>
+   </property>
+   <property name="text">
+    <string>展示结果</string>
+   </property>
+  </action>
+  <action name="showset">
+   <property name="text">
+    <string>结果展示设置</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
