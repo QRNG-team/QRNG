@@ -10,7 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
-
+from PyQt5.QtPrintSupport import *
 
 class Ui_MainWindow(object):
 
@@ -222,7 +222,7 @@ class Ui_MainWindow(object):
                 self.textEdit.setText(data)
 
     def savefile(self):
-        fileName = QFileDialog.getSaveFileName(self, '保存文件', './', "Text files (*.txt)")
+        fileName = QtWidgets.QFileDialog.getSaveFileName(None, '保存文件', './', "Text files (*.txt)")
         if fileName[0]:
             with open(fileName[0], 'w', encoding='gb18030', errors='ignore') as f:
                 f.write(self.tx.toPlainText())
