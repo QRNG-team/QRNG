@@ -1,7 +1,7 @@
 # quantum-random-number-generator
 ## 项目说明
 
-QRNG项目分为分为后提取部分、随机数检测部分（QRNGdetection）和文档三部分组成。
+QRNG项目分为分为后提取部分、随机数检测部分（QRNGdetection）、UI、资源文件（source）和程序文档五部分组成。
 
 后提取部分负责使用Toeplitz-hash方法对原始随机序列进行提取，消除噪声；随机数检测部分（QRNGdetection）负责检测生成的最终序列是否具有真随机数的性质；文档包括软件设计开发的相关文字资料与图。
 
