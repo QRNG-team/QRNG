@@ -125,7 +125,7 @@ class Ui_MainWindow(object):
         self.extractorset.setObjectName("extractorset")
         self.rundetection = QtWidgets.QAction(MainWindow)
         icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap("../source/ico/play.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon6.addPixmap(QtGui.QPixmap("../source/ico/检测.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.rundetection.setIcon(icon6)
         self.rundetection.setObjectName("rundetection")
         self.detectionset = QtWidgets.QAction(MainWindow)
@@ -138,7 +138,7 @@ class Ui_MainWindow(object):
         self.aboutqt.setObjectName("aboutqt")
         self.show = QtWidgets.QAction(MainWindow)
         icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap("../source/ico/运行.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon7.addPixmap(QtGui.QPixmap("../source/ico/展示.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.show.setIcon(icon7)
         self.show.setObjectName("show")
         self.showset = QtWidgets.QAction(MainWindow)
@@ -171,6 +171,8 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+
 
         self.open.setShortcut('Ctrl+O')
         self.open.triggered.connect(self.openfile)

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1166</width>
-    <height>935</height>
+    <width>1241</width>
+    <height>968</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -35,10 +35,10 @@
         <item>
          <widget class="QScrollArea" name="scrollArea">
           <property name="verticalScrollBarPolicy">
-           <enum>Qt::ScrollBarAlwaysOn</enum>
+           <enum>Qt::ScrollBarAsNeeded</enum>
           </property>
           <property name="horizontalScrollBarPolicy">
-           <enum>Qt::ScrollBarAlwaysOn</enum>
+           <enum>Qt::ScrollBarAsNeeded</enum>
           </property>
           <property name="widgetResizable">
            <bool>false</bool>
@@ -46,12 +46,17 @@
           <widget class="QWidget" name="scrollAreaWidgetContents">
            <property name="geometry">
             <rect>
-             <x>-2176</x>
+             <x>0</x>
              <y>0</y>
              <width>5000</width>
              <height>5000</height>
             </rect>
            </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QTextBrowser" name="ResultBrowser"/>
+            </item>
+           </layout>
           </widget>
          </widget>
         </item>
@@ -79,10 +84,10 @@
         <item>
          <widget class="QScrollArea" name="scrollArea_2">
           <property name="verticalScrollBarPolicy">
-           <enum>Qt::ScrollBarAlwaysOn</enum>
+           <enum>Qt::ScrollBarAsNeeded</enum>
           </property>
           <property name="horizontalScrollBarPolicy">
-           <enum>Qt::ScrollBarAlwaysOn</enum>
+           <enum>Qt::ScrollBarAsNeeded</enum>
           </property>
           <property name="widgetResizable">
            <bool>false</bool>
@@ -90,12 +95,17 @@
           <widget class="QWidget" name="scrollAreaWidgetContents_2">
            <property name="geometry">
             <rect>
-             <x>-20</x>
-             <y>-238</y>
+             <x>0</x>
+             <y>0</y>
              <width>5000</width>
              <height>5000</height>
             </rect>
            </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QTextBrowser" name="LogBrowser"/>
+            </item>
+           </layout>
           </widget>
          </widget>
         </item>
@@ -117,7 +127,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1166</width>
+     <width>1241</width>
      <height>23</height>
     </rect>
    </property>
@@ -242,7 +252,7 @@
   <action name="rundetection">
    <property name="icon">
     <iconset>
-     <normaloff>../source/ico/play.ico</normaloff>../source/ico/play.ico</iconset>
+     <normaloff>../source/ico/检测.png</normaloff>../source/ico/检测.png</iconset>
    </property>
    <property name="text">
     <string>运行检测</string>
@@ -274,7 +284,7 @@
   <action name="show">
    <property name="icon">
     <iconset>
-     <normaloff>../source/ico/运行.ico</normaloff>../source/ico/运行.ico</iconset>
+     <normaloff>../source/ico/展示.png</normaloff>../source/ico/展示.png</iconset>
    </property>
    <property name="text">
     <string>展示结果</string>
