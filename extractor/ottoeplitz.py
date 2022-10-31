@@ -49,7 +49,6 @@ class Toeplitz:
         data : list
             Resized input data.
         """
-        print("flag1")
         N = 0
         while (len(self.data) - 2**N) >= 0:
             N += 1
@@ -74,7 +73,6 @@ class Toeplitz:
         pmax = np.max(binned_data)/2**N
         min_ent = -np.log2(pmax)
         self.min_ent = min_ent
-        print(self.min_ent)
         #return 0.4 * min_ent
         return min_ent
 
@@ -169,7 +167,6 @@ class Toeplitz:
         hashed_data : array
             Digitized hashed data.
         """
-        print("flag")
         N, data = self._calculate_N()
 
         out_len = self._output_length()
@@ -177,7 +174,6 @@ class Toeplitz:
         toep_mat = self._toep_mat(data_flat)
 
         split = np.array_split(data_flat, self.bits * 2**(N-self.bits))
-        print(len(split))
         data_hashed = np.dot(toep_mat, split[0]) % 2
         for index, data in enumerate(split[1:-1]):
             sample_hashed = np.dot(toep_mat, data) % 2

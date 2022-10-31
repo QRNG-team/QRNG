@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mainwindow.ui'
+# Form implementation generated from reading ui file 'mainGUI.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -12,6 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
 from extractor import mainextractor, ottoeplitz, plotting
 from extractor.mainextractor import Extractor
+from UI.Thread import *
 
 
 class Ui_MainWindow(object):
@@ -20,12 +21,12 @@ class Ui_MainWindow(object):
     """
 
     def __init__(self):
+        self.thread = None
         self.N = 0
         self.scale = 0
         self.frname = None
         self.fwname = None
         self.filename = None
-        self.input = []
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -206,12 +207,14 @@ class Ui_MainWindow(object):
         self.open.setShortcut('Ctrl+O')
         self.open.triggered.connect(self.openFile)
         self.save.setShortcut('Ctrl+s')
-        self.save.triggered.connect(self.saveFile)
+        self.save.triggered.connect(self.getFolder)
         self.setpage.setShortcut('Ctrl+P')
         self.setpage.triggered.connect(self.pageSettings)
         self.print.triggered.connect(self.printDialog)
         self.runextract.setShortcut('Ctrl+E')
         self.runextract.triggered.connect(self.runExtract)
+        self.rundetection.setShortcut('Ctrl+D')
+        self.rundetection.triggered.connect(self.runDetection)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -240,20 +243,24 @@ class Ui_MainWindow(object):
         self.showset.setText(_translate("MainWindow", "结果展示设置"))
 
     def openFile(self):
+
         fname = QtWidgets.QFileDialog.getOpenFileName(None, 'open', '.\\', "Images (*.png *.csv *txt *.jpg)")
         # if fname[0]:
         #     f = open(fname[0], 'r')
         #     with f:
         #         data = f.read()
-        self.LogBrowser.append(f"已成功导入{fname[0]}")
+        if len(fname[0]):
+            self.LogBrowser.append(f"已成功导入{fname[0]}")
         self.frname = fname[0]
         print(self.frname)
 
-    def saveFile(self):
-        fileName = QtWidgets.QFileDialog.getSaveFileName(None, '保存文件', './', "Text files (*.txt)")
-        if fileName[0]:
-            with open(fileName[0], 'w', encoding='gb18030', errors='ignore') as f:
-                f.write(self.tx.toPlainText())
+    def getFolder(self):
+        self.fwname = QtWidgets.QFileDialog.getExistingDirectory()
+        if len(self.fwname):
+            self.LogBrowser.append(f"输出序列所在文件夹已设置为{self.fwname}")
+        # if fileName[0]:
+        #     with open(fileName[0], 'w', encoding='gb18030', errors='ignore') as f:
+        #         f.write(self.tx.toPlainText())
 
     def pageSettings(self):
         printsetdialog = QPageSetupDialog(self.printer, self)
@@ -265,12 +272,58 @@ class Ui_MainWindow(object):
             self.tx.print(self.printer)
 
     def runExtract(self):
+        self.LogBrowser.append(f"正在提取{self.frname}")
         self.fwname = "E:\Project\Python\实验\第二次预实验\实验结果\输入5.130dBm量程0.2V"
-        self.scale = scale = 2 ** 17 + 20000
+        self.scale = 2 ** 17 + 20000
         self.N = 14
         self.filename = '输入4.135dBm量程0.2V'  # 实验数据类型
-        ex = Extractor(self.frname, self.fwname, self.filename, self.input, self.scale, self.N)
-        ex.extract()
+        para = {"frname": self.frname, "fwname": self.fwname, "scale": self.scale, "N": self.N,
+                "filename": self.filename}
+        print('Start clicked.')
+        self.thread = Extract_Thread(para)  # 将线程thread的信号finishSignal和UI主线程中的槽函数Change进行连接
+        self.thread.finishSignal.connect(self.Change)
+        self.thread.finishSignal.connect(self.ExtractEnd)
+        # 启动线程，执行线程类中run函数
+        self.thread.start()
+
+    def runDetection(self):
+        self.LogBrowser.append(f"正在检测{self.frname}")
+        self.fwname = "E:\Project\Python\实验\第二次预实验\实验结果\输入5.130dBm量程0.2V"
+        self.scale = 2 ** 17 + 20000
+        self.N = 14
+        self.filename = '输入4.135dBm量程0.2V'  # 实验数据类型
+        para = {"frname": self.frname, "fwname": self.fwname, "scale": self.scale, "N": self.N,
+                "filename": self.filename}
+        print('Start clicked.')
+        self.thread = Detection_Thread(para)  # 将线程thread的信号finishSignal和UI主线程中的槽函数Change进行连接
+        self.thread.finishSignal.connect(self.Change)
+        self.thread.finishSignal.connect(self.DetectionEnd)
+        # 启动线程，执行线程类中run函数
+        self.thread.start()
+
+    # 接受通过emit传来的信息，执行相应操作
+    def Change(self, msg):
+        print(msg)
+        self.LogBrowser.append(msg)
+
+    def ExtractEnd(self):
+        self.LogBrowser.append(f"完成提取")
+
+    def DetectionEnd(self):
+        self.LogBrowser.append(f"完成检测")
+
+    # def initExtractThread(self):
+    #     # 创建子线程并和当前窗口绑定
+    #     self.thread = ExtractThread(None)
+    #
+    #     self.send_singal.emit([self.frname,self.fwname,self.scale,self.N,self.filename])
+    #     # 完成循环后删除子线程
+    #     self.thread.finished.connect(self.thread.deleteLater)
+    #     self.thread.send_singal.connect(self.change_value)
+
+    def change_value(self, value):
+        # 设置进度条
+        self.progressBar.setValue(value)
 
 
 if __name__ == "__main__":
