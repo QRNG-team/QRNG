@@ -54,7 +54,14 @@
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
-             <widget class="QTextBrowser" name="ResultBrowser"/>
+             <widget class="QTextBrowser" name="ResultBrowser">
+              <property name="font">
+               <font>
+                <family>Adobe 黑体 Std R</family>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -103,7 +110,14 @@
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
-             <widget class="QTextBrowser" name="LogBrowser"/>
+             <widget class="QTextBrowser" name="LogBrowser">
+              <property name="font">
+               <font>
+                <family>Adobe 黑体 Std R</family>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -220,7 +234,7 @@
   <action name="setpage">
    <property name="icon">
     <iconset>
-     <normaloff>../source/ico/设置.ico</normaloff>../source/ico/设置.ico</iconset>
+     <normaloff>../source/ico/setup.ico</normaloff>../source/ico/setup.ico</iconset>
    </property>
    <property name="text">
     <string>页面设置</string>
@@ -245,6 +259,10 @@
    </property>
   </action>
   <action name="extractorset">
+   <property name="icon">
+    <iconset>
+     <normaloff>../source/ico/设置.ico</normaloff>../source/ico/设置.ico</iconset>
+   </property>
    <property name="text">
     <string>提取设置</string>
    </property>
@@ -259,6 +277,10 @@
    </property>
   </action>
   <action name="detectionset">
+   <property name="icon">
+    <iconset>
+     <normaloff>../source/ico/设置.ico</normaloff>../source/ico/设置.ico</iconset>
+   </property>
    <property name="text">
     <string>检测设置</string>
    </property>
@@ -267,6 +289,10 @@
    </property>
   </action>
   <action name="entropyset">
+   <property name="icon">
+    <iconset>
+     <normaloff>../source/ico/设置.ico</normaloff>../source/ico/设置.ico</iconset>
+   </property>
    <property name="text">
     <string>熵源设置</string>
    </property>
@@ -291,6 +317,10 @@
    </property>
   </action>
   <action name="showset">
+   <property name="icon">
+    <iconset>
+     <normaloff>../source/ico/设置.ico</normaloff>../source/ico/设置.ico</iconset>
+   </property>
    <property name="text">
     <string>结果展示设置</string>
    </property>
