@@ -17,9 +17,7 @@ class Extract_Thread(QThread):
     # run函数是子线程中的操作，线程启动后开始执行
     def run(self):
         ex = Extractor(self.para)
-
         ex.extract()
-        print("flag1")
         # 发射自定义信号
         # 通过emit函数将参数i传递给主线程，触发自定义信号
         self.finishSignal.emit("yes")  # 注意这里与_signal = pyqtSignal(str)中的类型相同
@@ -43,7 +41,6 @@ class Detection_Thread(QThread):
         ex = Extractor(self.para)
 
         ex.detection()
-        print("flag2")
         # 发射自定义信号
         # 通过emit函数将参数i传递给主线程，触发自定义信号
         self.finishSignal.emit("yes")  # 注意这里与_signal = pyqtSignal(str)中的类型相同

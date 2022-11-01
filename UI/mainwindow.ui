@@ -149,9 +149,12 @@
     <property name="title">
      <string>文件</string>
     </property>
-    <addaction name="open"/>
+    <addaction name="openextract"/>
+    <addaction name="opendetection"/>
     <addaction name="separator"/>
-    <addaction name="save"/>
+    <addaction name="getdetectfolder"/>
+    <addaction name="getextractfolder"/>
+    <addaction name="separator"/>
     <addaction name="setpage"/>
     <addaction name="print"/>
    </widget>
@@ -207,13 +210,15 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="open"/>
-   <addaction name="save"/>
+   <addaction name="openextract"/>
+   <addaction name="opendetection"/>
+   <addaction name="getextractfolder"/>
+   <addaction name="getdetectfolder"/>
    <addaction name="runextract"/>
    <addaction name="rundetection"/>
    <addaction name="show"/>
   </widget>
-  <action name="open">
+  <action name="openextract">
    <property name="icon">
     <iconset>
      <normaloff>../source/ico/addfile.ico</normaloff>../source/ico/addfile.ico</iconset>
@@ -222,7 +227,7 @@
     <string>打开原始序列文件</string>
    </property>
   </action>
-  <action name="save">
+  <action name="getextractfolder">
    <property name="icon">
     <iconset>
      <normaloff>../source/ico/save.png</normaloff>../source/ico/save.png</iconset>
@@ -237,7 +242,7 @@
      <normaloff>../source/ico/setup.ico</normaloff>../source/ico/setup.ico</iconset>
    </property>
    <property name="text">
-    <string>页面设置</string>
+    <string>页面管理</string>
    </property>
   </action>
   <action name="print">
@@ -323,6 +328,24 @@
    </property>
    <property name="text">
     <string>结果展示设置</string>
+   </property>
+  </action>
+  <action name="getdetectfolder">
+   <property name="icon">
+    <iconset>
+     <normaloff>../source/ico/文件设置.png</normaloff>../source/ico/文件设置.png</iconset>
+   </property>
+   <property name="text">
+    <string>设置检测文件路径</string>
+   </property>
+  </action>
+  <action name="opendetection">
+   <property name="icon">
+    <iconset>
+     <normaloff>../source/ico/打开文件夹.png</normaloff>../source/ico/打开文件夹.png</iconset>
+   </property>
+   <property name="text">
+    <string>打开待检测文件</string>
    </property>
   </action>
  </widget>

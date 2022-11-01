@@ -130,11 +130,11 @@ class Ui_MainWindow(object):
         self.toolBar = QtWidgets.QToolBar(MainWindow)
         self.toolBar.setObjectName("toolBar")
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
-        self.openextract = QtWidgets.QAction(MainWindow)
+        self.open = QtWidgets.QAction(MainWindow)
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap("../source/ico/addfile.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.openextract.setIcon(icon1)
-        self.openextract.setObjectName("openextract")
+        self.open.setIcon(icon1)
+        self.open.setObjectName("open")
         self.getextractfolder = QtWidgets.QAction(MainWindow)
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap("../source/ico/save.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -188,13 +188,7 @@ class Ui_MainWindow(object):
         icon9.addPixmap(QtGui.QPixmap("../source/ico/文件设置.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.getdetectfolder.setIcon(icon9)
         self.getdetectfolder.setObjectName("getdetectfolder")
-        self.opendetection = QtWidgets.QAction(MainWindow)
-        icon10 = QtGui.QIcon()
-        icon10.addPixmap(QtGui.QPixmap("../source/ico/打开文件夹.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.opendetection.setIcon(icon10)
-        self.opendetection.setObjectName("opendetection")
-        self.Mfile.addAction(self.openextract)
-        self.Mfile.addAction(self.opendetection)
+        self.Mfile.addAction(self.open)
         self.Mfile.addSeparator()
         self.Mfile.addAction(self.getdetectfolder)
         self.Mfile.addAction(self.getextractfolder)
@@ -216,8 +210,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.Mentropy.menuAction())
         self.menubar.addAction(self.Mshow.menuAction())
         self.menubar.addAction(self.about.menuAction())
-        self.toolBar.addAction(self.openextract)
-        self.toolBar.addAction(self.opendetection)
+        self.toolBar.addAction(self.open)
         self.toolBar.addAction(self.getextractfolder)
         self.toolBar.addAction(self.getdetectfolder)
         self.toolBar.addAction(self.runextract)
@@ -228,12 +221,10 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
         """
-          设置快捷键并通过信号-槽机制触发事件
-        """
-        self.openextract.setShortcut('Ctrl+shift+E')
-        self.openextract.triggered.connect(self.openExtractFile)
-        self.opendetection.setShortcut('Ctrl+shift+D')
-        self.opendetection.triggered.connect(self.openDetectionFile)
+       设置快捷键并通过信号-槽机制触发事件
+       """
+        self.open.setShortcut('Ctrl+O')
+        self.open.triggered.connect(self.openFile)
         self.getextractfolder.triggered.connect(self.getExtractFolder)
         self.getdetectfolder.triggered.connect(self.getDetectionFolder)
         self.setpage.setShortcut('Ctrl+P')
@@ -243,7 +234,6 @@ class Ui_MainWindow(object):
         self.runextract.triggered.connect(self.runExtract)
         self.rundetection.setShortcut('Ctrl+D')
         self.rundetection.triggered.connect(self.runDetection)
-
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -256,7 +246,7 @@ class Ui_MainWindow(object):
         self.about.setTitle(_translate("MainWindow", "关于"))
         self.Mshow.setTitle(_translate("MainWindow", "展示"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
-        self.openextract.setText(_translate("MainWindow", "打开原始序列文件"))
+        self.open.setText(_translate("MainWindow", "打开原始序列文件"))
         self.getextractfolder.setText(_translate("MainWindow", "设置输出文件位置"))
         self.setpage.setText(_translate("MainWindow", "页面管理"))
         self.print.setText(_translate("MainWindow", "打印文件"))
@@ -271,31 +261,18 @@ class Ui_MainWindow(object):
         self.show.setText(_translate("MainWindow", "展示结果"))
         self.showset.setText(_translate("MainWindow", "结果展示设置"))
         self.getdetectfolder.setText(_translate("MainWindow", "设置检测文件路径"))
-        self.opendetection.setText(_translate("MainWindow", "打开待检测文件"))
 
+    def openFile(self):
 
-
-    def openExtractFile(self):
         fname = QtWidgets.QFileDialog.getOpenFileName(None, 'open', '.\\', "Images (*.png *.csv *txt *.jpg)")
         # if fname[0]:
         #     f = open(fname[0], 'r')
         #     with f:
         #         data = f.read()
         if len(fname[0]):
-            self.LogBrowser.append(f"已成功导入原始序列文件：{fname[0]}")
+            self.LogBrowser.append(f"已成功导入{fname[0]}")
         self.fername = fname[0]
         print(self.fername)
-
-    def openDetectionFile(self):
-        fname = QtWidgets.QFileDialog.getOpenFileName(None, 'open', '.\\', "Images (*.png *.csv *txt *.jpg)")
-        # if fname[0]:
-        #     f = open(fname[0], 'r')
-        #     with f:
-        #         data = f.read()
-        if len(fname[0]):
-            self.LogBrowser.append(f"已成功导入待检测文件：{fname[0]}")
-        self.fdrname = fname[0]
-        print(self.fdrname)
 
     def getExtractFolder(self):
         self.fewname = QtWidgets.QFileDialog.getExistingDirectory()
@@ -347,7 +324,7 @@ class Ui_MainWindow(object):
         if self.fdwname is None:
             self.LogBrowser.append(f"输出检测结果文件路径不能为空")
             return
-        self.LogBrowser.append(f"正在检测{self.fdrname}")
+        self.LogBrowser.append(f"正在检测{self.frname}")
         self.scale = 2 ** 18 + 20000
         self.N = 14
         self.filename = '输入4.135dBm量程0.2V'  # 实验数据类型
