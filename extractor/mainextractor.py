@@ -73,7 +73,11 @@ class Extractor:
         self.length = len(dist)
         output = open(f'{self.fewname}/{self.filename}-后提取结果-数据：{self.scale}.txt', 'w')
         output.write(dist)
-
+        outpara = open(f'{self.fewname}/{self.filename}-后提取结果-参数：{self.scale}.txt', 'w')
+        outpara.write('原始数据最小熵为： %.2f \n' % self.t.min_ent)
+        outpara.write('提取运行时间: %.4f Seconds\n' % self.runtime)
+        self.extractspeed = self.length / (self.testtime * 1000)
+        outpara.write('提取速度: %.2f kbps\n' % self.extractspeed)
 
         # 检测
     def detection(self):
@@ -91,16 +95,13 @@ class Extractor:
         self.testtime = end - start
         print('**************************************************************************')
         print(len(test))
-        f = open(f'{self.fdwname}/{self.filename}-检测结果-数据：{self.scale}.txt', "w")
+        fdresult = open(f'{self.fdwname}/{self.filename}-检测结果-数据：{self.scale}.txt', "w")
         for result in results:
             (summary_name, summary_p, summary_result) = result
-            print(summary_name.ljust(40), summary_p.ljust(28), summary_result, file=f)
-        outpara = open(f'{self.fdwname}/{self.filename}-后提取参数-数据：{self.scale}.txt', 'w+')
-        outpara.write('Running time: %.4f Seconds\n' % self.runtime)
-        outpara.write('Test time: %.4f Seconds\n' % self.testtime)
-        self.speed = self.length / (self.testtime * 1000)
-        outpara.write('Speed: %.2f kbps\n' % self.speed)
-        outpara.write('最小熵为： %.2f \n' % self.t.min_ent) #有问题
+            print(summary_name.ljust(40), summary_p.ljust(28), summary_result, file=fdresult)
+        outpara = open(f'{self.fdwname}/{self.filename}-检测结果-参数：{self.scale}.txt', 'w+')
+        outpara.write('检测时间: %.4f Seconds\n' % self.testtime)
+
 
     def get_time(self):
         if sys.version_info > (3, 8):  # 兼容Python版本
