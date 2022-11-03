@@ -76,7 +76,7 @@ class Extractor:
         outpara = open(f'{self.fewname}/{self.filename}-后提取结果-参数：{self.scale}.txt', 'w')
         outpara.write('原始数据最小熵为： %.2f \n' % self.t.min_ent)
         outpara.write('提取运行时间: %.4f Seconds\n' % self.runtime)
-        self.extractspeed = self.length / (self.testtime * 1000)
+        self.extractspeed = self.length / (self.runtime * 1000)
         outpara.write('提取速度: %.2f kbps\n' % self.extractspeed)
 
         # 检测
