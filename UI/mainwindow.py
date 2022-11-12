@@ -10,6 +10,7 @@
 from PyQt5.QtPrintSupport import *
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
+import sip
 from extractor import mainextractor, ottoeplitz, plotting
 from extractor.mainextractor import Extractor
 from UI.Thread import *
@@ -22,6 +23,7 @@ class Ui_MainWindow(object):
 
     def __init__(self):
         self.thread = None
+        self.thread_1 = None
         self.N = 0
         self.scale = 0
         self.fername = None
@@ -29,6 +31,7 @@ class Ui_MainWindow(object):
         self.filename = None
         self.fdrname = None
         self.fdwname = None
+        self.printer = QPrinter()
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -103,10 +106,6 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.scrollArea_2)
         self.logLayout.addLayout(self.horizontalLayout)
         self.verticalLayout.addLayout(self.logLayout)
-        self.progressBar = QtWidgets.QProgressBar(self.centralwidget)
-        self.progressBar.setProperty("value", 24)
-        self.progressBar.setObjectName("progressBar")
-        self.verticalLayout.addWidget(self.progressBar)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1241, 23))
@@ -244,7 +243,6 @@ class Ui_MainWindow(object):
         self.rundetection.setShortcut('Ctrl+D')
         self.rundetection.triggered.connect(self.runDetection)
 
-
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "随机数发生器"))
@@ -273,8 +271,6 @@ class Ui_MainWindow(object):
         self.getdetectfolder.setText(_translate("MainWindow", "设置检测文件路径"))
         self.opendetection.setText(_translate("MainWindow", "打开待检测文件"))
 
-
-
     def openExtractFile(self):
         fname = QtWidgets.QFileDialog.getOpenFileName(None, 'open', '.\\', "Images (*.png *.csv *txt *.jpg)")
         # if fname[0]:
@@ -283,8 +279,11 @@ class Ui_MainWindow(object):
         #         data = f.read()
         if len(fname[0]):
             self.LogBrowser.append(f"已成功导入原始序列文件：{fname[0]}")
+        # l = fname[0].rsplit('/', 1)
+        # print(l)
         self.fername = fname[0]
-        print(self.fername)
+        self.filename = "extract"
+        # self.filename = l[1]
 
     def openDetectionFile(self):
         fname = QtWidgets.QFileDialog.getOpenFileName(None, 'open', '.\\', "Images (*.png *.csv *txt *.jpg)")
@@ -294,8 +293,11 @@ class Ui_MainWindow(object):
         #         data = f.read()
         if len(fname[0]):
             self.LogBrowser.append(f"已成功导入待检测文件：{fname[0]}")
+        # l = fname[0].rsplit('/',1)
+        # print(l)
         self.fdrname = fname[0]
-        print(self.fdrname)
+        self.filename = "detection"
+        # self.filename = l[-1]
 
     def getExtractFolder(self):
         self.fewname = QtWidgets.QFileDialog.getExistingDirectory()
@@ -311,6 +313,7 @@ class Ui_MainWindow(object):
             self.LogBrowser.append(f"检测结果所在文件夹已设置为{self.fdwname}")
 
     def pageSettings(self):
+        print(1)
         printsetdialog = QPageSetupDialog(self.printer, self)
         printsetdialog.exec_()
 
@@ -328,14 +331,18 @@ class Ui_MainWindow(object):
             return
         self.LogBrowser.append(f"正在提取{self.fername}")
         self.scale = 2 ** 18 + 20000
-        self.N = 14
-        self.filename = '输入4.135dBm量程0.2V'  # 实验数据类型
+        self.N = 14  # 实验数据类型
         para = {"fername": self.fername, "fewname": self.fewname, "scale": self.scale, "N": self.N,
                 "fdrname": self.fdrname, "fdwname": self.fdwname,
                 "filename": self.filename}
         print('Start clicked.')
+        self.createProgressBar()
+        self.is_done = 0  # 设置完成标记 完成/未完成 1/0
+        self.thread_1 = Runthread()
+        self.thread_1.progressBarValue.connect(self.callback)
+        self.thread_1.signal_done.connect(self.callback_done)
+        self.thread_1.start()
         self.thread = Extract_Thread(para)  # 将线程thread的信号finishSignal和UI主线程中的槽函数Change进行连接
-        self.thread.finishSignal.connect(self.Change)
         self.thread.finishSignal.connect(self.ExtractEnd)
         # 启动线程，执行线程类中run函数
         self.thread.start()
@@ -349,28 +356,36 @@ class Ui_MainWindow(object):
             return
         self.LogBrowser.append(f"正在检测{self.fdrname}")
         self.scale = 2 ** 18 + 20000
-        self.N = 14
-        self.filename = '输入4.135dBm量程0.2V'  # 实验数据类型
+        self.N = 14  # 实验数据类型
         para = {"fername": self.fername, "fewname": self.fewname, "scale": self.scale, "N": self.N,
                 "fdrname": self.fdrname, "fdwname": self.fdwname,
                 "filename": self.filename}
         print('Start clicked.')
         self.thread = Detection_Thread(para)  # 将线程thread的信号finishSignal和UI主线程中的槽函数Change进行连接
-        self.thread.finishSignal.connect(self.Change)
         self.thread.finishSignal.connect(self.DetectionEnd)
         # 启动线程，执行线程类中run函数
         self.thread.start()
 
     # 接受通过emit传来的信息，执行相应操作
-    def Change(self, msg):
-        print(msg)
-        self.LogBrowser.append(msg)
+    def ExtractEnd(self,lst):
+        print(lst)
+        self.LogBrowser.append(lst[-1])
+        self.ResultBrowser.append('原始数据最小熵为： %.2f \n' % lst[0])
+        self.ResultBrowser.append('提取运行时间为： %.2f秒 \n' % lst[1])
+        self.ResultBrowser.append('提取速度为： %.2fkbps\n' % lst[2])
 
-    def ExtractEnd(self):
         self.LogBrowser.append(f"完成提取")
+        self.deleteProgressBar()
 
-    def DetectionEnd(self):
+    def DetectionEnd(self,lst):
+        print(lst)
+        self.LogBrowser.append(lst[-1])
+        self.ResultBrowser.append('NIST检测结果如下：')
+        for i in range(len(lst)-1):
+            self.ResultBrowser.append(lst[i])
+        self.ResultBrowser.append('检测时间为： %.2f秒 ' % lst[-2])
         self.LogBrowser.append(f"完成检测")
+        self.deleteProgressBar()
 
     # def initExtractThread(self):
     #     # 创建子线程并和当前窗口绑定
@@ -381,9 +396,27 @@ class Ui_MainWindow(object):
     #     self.thread.finished.connect(self.thread.deleteLater)
     #     self.thread.send_singal.connect(self.change_value)
 
-    def change_value(self, value):
+    def createProgressBar(self):
         # 设置进度条
-        self.progressBar.setValue(value)
+        self.progressBar = QtWidgets.QProgressBar(self.centralwidget)
+        self.progressBar.setObjectName("progressBar")
+        self.verticalLayout.addWidget(self.progressBar)
+        self.progressBar.setValue(0)
+
+    def deleteProgressBar(self):
+        # 删除进度条
+        self.verticalLayout.removeWidget(self.progressBar)
+        sip.delete(self.progressBar)
+
+    # 回传进度条参数
+    def callback(self, i):
+        self.progressBar.setValue(i)
+
+    # 回传结束信号
+    def callback_done(self, i):
+        self.is_done = i
+        # if self.is_done == 1:
+        #     Runthread.ExeMessageDialog()
 
 
 if __name__ == "__main__":
