@@ -14,6 +14,7 @@ import sip
 from extractor import mainextractor, ottoeplitz, plotting
 from extractor.mainextractor import Extractor
 from UI.Thread import *
+import extractorset
 
 
 class Ui_MainWindow(object):
@@ -242,6 +243,7 @@ class Ui_MainWindow(object):
         self.runextract.triggered.connect(self.runExtract)
         self.rundetection.setShortcut('Ctrl+D')
         self.rundetection.triggered.connect(self.runDetection)
+        self.extractorset.triggered.connect(self.extractorSet)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -298,6 +300,10 @@ class Ui_MainWindow(object):
         self.fdrname = fname[0]
         self.filename = "detection"
         # self.filename = l[-1]
+
+    def extractorSet(self):
+        self.exwin = extractorset.Ui_Form()
+        self.window2.before_close_signal.connect(extractorset.echo)
 
     def getExtractFolder(self):
         self.fewname = QtWidgets.QFileDialog.getExistingDirectory()
@@ -361,29 +367,40 @@ class Ui_MainWindow(object):
                 "fdrname": self.fdrname, "fdwname": self.fdwname,
                 "filename": self.filename}
         print('Start clicked.')
+        self.createProgressBar()
+        self.is_done = 0  # 设置完成标记 完成/未完成 1/0
+        self.thread_1 = Runthread()
+        self.thread_1.progressBarValue.connect(self.callback)
+        self.thread_1.signal_done.connect(self.callback_done)
+        self.thread_1.start()
         self.thread = Detection_Thread(para)  # 将线程thread的信号finishSignal和UI主线程中的槽函数Change进行连接
         self.thread.finishSignal.connect(self.DetectionEnd)
         # 启动线程，执行线程类中run函数
         self.thread.start()
 
     # 接受通过emit传来的信息，执行相应操作
-    def ExtractEnd(self,lst):
+    def ExtractEnd(self, lst):
         print(lst)
         self.LogBrowser.append(lst[-1])
         self.ResultBrowser.append('原始数据最小熵为： %.2f \n' % lst[0])
         self.ResultBrowser.append('提取运行时间为： %.2f秒 \n' % lst[1])
         self.ResultBrowser.append('提取速度为： %.2fkbps\n' % lst[2])
-
+        self.ResultBrowser.ensureCursorVisible()
         self.LogBrowser.append(f"完成提取")
         self.deleteProgressBar()
 
-    def DetectionEnd(self,lst):
-        print(lst)
+    def DetectionEnd(self, lst):
         self.LogBrowser.append(lst[-1])
         self.ResultBrowser.append('NIST检测结果如下：')
-        for i in range(len(lst)-1):
-            self.ResultBrowser.append(lst[i])
+        self.ResultBrowser.append('%-80s%-80s%-80s' % ("测试项：","P值","是否通过"))
+        for i in range(len(lst) - 2):
+            print(len(lst[i][0]))
+            print(len(lst[i][1]))
+            print(len(lst[i][2]))
+            print("stop")
+            self.ResultBrowser.append('{:<80s} {:<80s}{:<80s}'.format(lst[i][0],lst[i][1],lst[i][2]))
         self.ResultBrowser.append('检测时间为： %.2f秒 ' % lst[-2])
+        self.ResultBrowser.ensureCursorVisible()
         self.LogBrowser.append(f"完成检测")
         self.deleteProgressBar()
 

@@ -19,7 +19,7 @@ class Extract_Thread(QThread):
     def run(self):
         ex = Extractor(self.para)
         exresult = ex.extract()
-        exresult.append(f"提取结果已保存到{self.para['fewname']}/{self.para['filename']}")
+        exresult.append(f"提取结果已保存到{self.para['fewname']}")
         # 发射自定义信号
         # 通过emit函数将参数i传递给主线程，触发自定义信号
         self.finishSignal.emit(
@@ -31,18 +31,20 @@ class Detection_Thread(QThread):
     # 自定义信号声明
     # 使用自定义信号和UI主线程通讯，参数是发送信号时附带参数的数据类型，可以是str、int、list等
     finishSignal = pyqtSignal(list)
-
+    pb = pyqtSignal(int)
     # 带一个参数t
     def __init__(self, para, parent=None):
         super(Detection_Thread, self).__init__(parent)
         self.para = para
+
 
     # run函数是子线程中的操作，线程启动后开始执行
     def run(self):
         ex = Extractor(self.para)
 
         detectresult,testtime = ex.detection()
-        detectresult.append(testtime,f"检测结果已保存到{self.para['fdwname']}/{self.para['filename']}")
+        detectresult.append(testtime)
+        detectresult.append(f"检测结果已保存到{self.para['fdwname']}")
         # 发射自定义信号
         # 通过emit函数将参数i传递给主线程，触发自定义信号
         self.finishSignal.emit(
