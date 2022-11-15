@@ -27,8 +27,12 @@ The procedure of Toeplitz hashing starts with some raw data of size n (produced 
 ## packages
 
 matplotlib>=3.3.4
+
 numpy>=1.19.5
+
 scipy>=1.5.4
+
+sip>=6.5
 
 ## **tips**
 
