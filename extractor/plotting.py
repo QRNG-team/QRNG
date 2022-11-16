@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import random
-import extractor.ottoeplitz
+from extractor.ottoeplitz import Toeplitz
 
 """ 
 Toeplitz Hashing Example
@@ -15,7 +15,8 @@ and after hashing. The data after hashing should be uniform.
 
 def plot_data(data, n):
         """ Bins up data and plots. """
-        N, data = ottoeplitz.Toeplitz._calculate_N(data)
+        t = Toeplitz(data,n)
+        N, data = t._calculate_N()
         binned_data, bins = np.histogram(data, bins=2**n-1)     
         data_digital = np.digitize(data, bins, right=True)   
         fig, ax = plt.subplots()  

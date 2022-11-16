@@ -69,7 +69,7 @@ class Extractor:
         for subdist in dist1:
             x = str(int(subdist))
             dist += x
-        # # plot_data(dist, 14)
+        # extractor.plotting.plot_data(dist, 14)
         self.runtime = end - start
         print('Running time: %.4f Seconds\n' % self.runtime)
         self.length = len(dist)

@@ -10,7 +10,6 @@
 from PyQt5.QtPrintSupport import *
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
-import sip
 from extractor import mainextractor, ottoeplitz, plotting
 from extractor.mainextractor import Extractor
 from UI.Thread import *
@@ -325,7 +324,7 @@ class Ui_MainWindow(object):
 
     def printDialog(self):
         printdialog = QPrintDialog(self.printer, self)
-        if QDialog.Accepted == printdialog.exec_():
+        if QPrintDialog.Accepted == printdialog.exec_():
             self.tx.print(self.printer)
 
     def runExtract(self):
@@ -422,8 +421,8 @@ class Ui_MainWindow(object):
 
     def deleteProgressBar(self):
         # 删除进度条
-        self.verticalLayout.removeWidget(self.progressBar)
-        sip.delete(self.progressBar)
+        self.progressBar.close()
+
 
     # 回传进度条参数
     def callback(self, i):
