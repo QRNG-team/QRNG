@@ -8,7 +8,7 @@ import extractor.plotting
 import time
 import sys
 import os
-
+from PyQt5.QtCore import QThread, pyqtSignal
 sys.path.append(os.path.dirname(os.path.dirname(__file__)) + '\\QRNGdetection')
 import QRNGdetection.sp800_22
 

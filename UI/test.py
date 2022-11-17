@@ -53,6 +53,10 @@ class printDialogDemo(QWidget):
             self.textEdit.print(self.printer)
 
 if __name__ == '__main__':
+    print('{:<80s}{:<80s}{:<80s}'.format('test：', 'p-value', 'result'))
+    print('{:<80s}{:<80s}{:<80s}'.format('monobit_test', '0.21086686163724397', 'PASS'))
+    print('{:<80s}{:<80s}{:<80s}'.format('frequency_within_block_test','0.21086686163724397', 'PASS'))
+    print('{:<80s}{:<80s}{:<80s}'.format('runs_test', '0.1529439388607733', 'PASS'))
     app = QtWidgets.QApplication(sys.argv)
     mainWin = printDialogDemo()
     mainWin.show()

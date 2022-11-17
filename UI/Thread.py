@@ -50,7 +50,6 @@ class Detection_Thread(QThread):
         self.finishSignal.emit(
             detectresult)  # 注意这里与_signal = pyqtSignal(str)中的类型相同
 
-
 # Runthread子线程
 class Runthread(QThread):
     progressBarValue = pyqtSignal(int)  # 更新进度条
