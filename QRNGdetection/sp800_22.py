@@ -15,7 +15,7 @@ from QRNGdetection import sp800_22_approximate_entropy_test
 from QRNGdetection import sp800_22_cumulative_sums_test
 from QRNGdetection import sp800_22_random_excursion_test
 from QRNGdetection import sp800_22_random_excursion_variant_test
-
+import Tool.glo as glo
 
 
 def all(results,bits):
@@ -36,6 +36,7 @@ def all(results,bits):
     if plist != None:
         summary_p = str(min(plist))
     results.append(('monobit_test', summary_p, summary_result))
+    glo.set_value('detectbar', 1)
 
     print('------------------------------------------------------')
     print('frequency_within_block_test')
@@ -54,6 +55,7 @@ def all(results,bits):
     if plist != None:
         summary_p = str(min(plist))
     results.append(('frequency_within_block_test', summary_p, summary_result))
+    glo.set_value('detectbar', 2)
 
     print('------------------------------------------------------')
     print('runs_test')
@@ -72,6 +74,7 @@ def all(results,bits):
     if plist != None:
         summary_p = str(min(plist))
     results.append(('runs_test', summary_p, summary_result))
+    glo.set_value('detectbar', 3)
 
     print('------------------------------------------------------')
     print('longest_run_ones_in_a_block_test')
@@ -90,6 +93,7 @@ def all(results,bits):
     if plist != None:
         summary_p = str(min(plist))
     results.append(('longest_run_ones_in_a_block_test', summary_p, summary_result))
+    glo.set_value('detectbar', 4)
 
     print('------------------------------------------------------')
     print('binary_matrix_rank_test')
@@ -108,6 +112,7 @@ def all(results,bits):
     if plist != None:
         summary_p = str(min(plist))
     results.append(('binary_matrix_rank_test', summary_p, summary_result))
+    glo.set_value('detectbar', 5)
 
     print('------------------------------------------------------')
     print('dft_test')
@@ -126,6 +131,7 @@ def all(results,bits):
     if plist != None:
         summary_p = str(min(plist))
     results.append(('dft_test', summary_p, summary_result))
+    glo.set_value('detectbar', 6)
 
     print('------------------------------------------------------')
     print('non_overlapping_template_matching_test')
@@ -144,6 +150,7 @@ def all(results,bits):
     if plist != None:
         summary_p = str(min(plist))
     results.append(('non_overlapping_template_matching_test', summary_p, summary_result))
+    glo.set_value('detectbar', 7)
 
     print('------------------------------------------------------')
     print('overlapping_template_matching_test')
@@ -162,6 +169,7 @@ def all(results,bits):
     if plist != None:
         summary_p = str(min(plist))
     results.append(('overlapping_template_matching_test', summary_p, summary_result))
+    glo.set_value('detectbar', 8)
 
     print('------------------------------------------------------')
     print('maurers_universal_test')
@@ -180,6 +188,7 @@ def all(results,bits):
     if plist != None:
         summary_p = str(min(plist))
     results.append(('maurers_universal_test', summary_p, summary_result))
+    glo.set_value('detectbar', 9)
 
     print('------------------------------------------------------')
     print('linear_complexity_test')
@@ -198,6 +207,7 @@ def all(results,bits):
     if plist != None:
         summary_p = str(min(plist))
     results.append(('linear_complexity_test', summary_p, summary_result))
+    glo.set_value('detectbar', 10)
 
     print('------------------------------------------------------')
     print('serial_test')
@@ -216,6 +226,7 @@ def all(results,bits):
     if plist != None:
         summary_p = str(min(plist))
     results.append(('serial_test', summary_p, summary_result))
+    glo.set_value('detectbar', 11)
 
     print('------------------------------------------------------')
     print('approximate_entropy_test')
@@ -234,6 +245,7 @@ def all(results,bits):
     if plist != None:
         summary_p = str(min(plist))
     results.append(('approximate_entropy_test', summary_p, summary_result))
+    glo.set_value('detectbar', 12)
 
     print('------------------------------------------------------')
     print('cumulative_sums_test')
@@ -253,6 +265,7 @@ def all(results,bits):
         print('p=', str(min(plist)))
         summary_p = str(min(plist))
     results.append(('cumulative_sums_test', summary_p, summary_result))
+    glo.set_value('detectbar', 13)
 
     print('------------------------------------------------------')
     print('random_excursion_test')
@@ -272,6 +285,7 @@ def all(results,bits):
         print('p=', str(min(plist)))
         summary_p = str(min(plist))
     results.append(('random_excursion_test', summary_p, summary_result))
+    glo.set_value('detectbar', 14)
 
     print('------------------------------------------------------')
     print('random_excursion_variant_test')
@@ -291,7 +305,7 @@ def all(results,bits):
         print('p=', str(min(plist)))
         summary_p = str(min(plist))
     results.append(('random_excursion_variant_test', summary_p, summary_result))
-
+    glo.set_value('detectbar', 15)
 
 if __name__ == "__main__":
     test = ''

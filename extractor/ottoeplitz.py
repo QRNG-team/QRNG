@@ -12,7 +12,7 @@ import numpy as np
 import pickle
 from scipy.constants import *
 from scipy.linalg import toeplitz
-
+import Tool.glo as glo
 class Toeplitz:
     """ 
     The ``Toeplitz`` class executes the Toeplitz hashing. It 
@@ -174,12 +174,11 @@ class Toeplitz:
         toep_mat = self._toep_mat(data_flat)
 
         split = np.array_split(data_flat, self.bits * 2**(N-self.bits))
-        i = 0
         data_hashed = np.dot(toep_mat, split[0]) % 2
         for index, data in enumerate(split[1:-1]):
             sample_hashed = np.dot(toep_mat, data) % 2
             data_hashed = np.append(data_hashed, sample_hashed)
-
+            glo.set_value('extractbar', (index / len(split))*100)
         # print(type(data_hashed[1]))
         if flag:
             data_hashed = np.array_split(data_hashed, out_len * 2 ** (N - self.bits))

@@ -11,7 +11,6 @@ import os
 from PyQt5.QtCore import QThread, pyqtSignal
 sys.path.append(os.path.dirname(os.path.dirname(__file__)) + '\\QRNGdetection')
 import QRNGdetection.sp800_22
-
 print("调用了QRNGdetection中的模块")
 print(sys.path)
 

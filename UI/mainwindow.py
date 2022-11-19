@@ -16,7 +16,7 @@ from extractor import mainextractor, ottoeplitz, plotting
 from extractor.mainextractor import Extractor
 from UI.Thread import *
 import extractorset
-
+import Tool.glo as glo
 
 class Ui_MainWindow(object):
     """
@@ -246,6 +246,9 @@ class Ui_MainWindow(object):
         self.rundetection.triggered.connect(self.runDetection)
         self.extractorset.triggered.connect(self.extractorSet)
 
+        glo._init()  # 先必须在主模块初始化（只在Main模块需要一次即可）
+        # 定义跨模块全局变量
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "随机数发生器"))
@@ -343,10 +346,11 @@ class Ui_MainWindow(object):
                 "fdrname": self.fdrname, "fdwname": self.fdwname,
                 "filename": self.filename}
         print('Start clicked.')
+        glo.set_value('extractbar', 0) #进度条进度设置，采用跨文件全部变量
         self.runextract.setEnabled(False)
         self.createProgressBar()
         self.is_done = 0  # 设置完成标记 完成/未完成 1/0
-        self.thread_1 = Runthread()
+        self.thread_1 = Runthread(1)
         self.thread_1.progressBarValue.connect(self.callback)
         self.thread_1.signal_done.connect(self.callback_done)
         self.thread_1.start()
@@ -369,10 +373,11 @@ class Ui_MainWindow(object):
                 "fdrname": self.fdrname, "fdwname": self.fdwname,
                 "filename": self.filename}
         print('Start clicked.')
+        glo.set_value('detectbar', 0)
         self.rundetection.setEnabled(False)
         self.createProgressBar()
         self.is_done = 0  # 设置完成标记 完成/未完成 1/0
-        self.thread_1 = Runthread()
+        self.thread_1 = Runthread(2)
         self.thread_1.progressBarValue.connect(self.callback)
         self.thread_1.signal_done.connect(self.callback_done)
         self.thread_1.start()
@@ -398,10 +403,6 @@ class Ui_MainWindow(object):
         self.ResultBrowser.append('NIST检测结果如下：')
         self.ResultBrowser.append('{:<50s}{:<50s}{:<50s}'.format('test item', 'P-value', 'Result'))
         for i in range(len(lst) - 2):
-            print(len(lst[i][0]))
-            print(len(lst[i][1]))
-            print(len(lst[i][2]))
-            print("stop")
             self.ResultBrowser.append('{:<50s} {:<50s}{:<50s}'.format(lst[i][0],lst[i][1],lst[i][2]))
         self.ResultBrowser.append('检测时间为： %.2f秒 ' % lst[-2])
         self.ResultBrowser.ensureCursorVisible()
