@@ -1,9 +1,9 @@
 # quantum-random-number-generator
 ## 项目说明
 
-QRNG项目分为分为后提取部分、随机数检测部分（QRNGdetection）、UI、资源文件（source）和程序文档五部分组成。
+QRNG项目分为分为后提取部分、随机数检测部分（QRNGdetection）、UI、Tool、资源文件（source）和程序文档六部分组成。
 
-UI为基于PyQt5的可视化界面具体实现；后提取部分负责使用Toeplitz-hash方法对原始随机序列进行提取，消除噪声；随机数检测部分（QRNGdetection）负责检测生成的最终序列是否具有真随机数的性质；文档包括软件设计开发的相关文字资料与图，资源文件为图标等文件。
+UI为基于PyQt5的可视化界面具体实现；后提取部分负责使用Toeplitz-hash方法对原始随机序列进行提取，消除噪声；随机数检测部分（QRNGdetection）负责检测生成的最终序列是否具有真随机数的性质；文档包括软件设计开发的相关文字资料与图，资源文件为图标等文件，Tool中包含跨文件全局变量等工具方法。
 
 主程序入口为mainwindow.py。
 
@@ -25,14 +25,11 @@ Toeplitz hashing algorithm for post-processing quantum random number generation
 The procedure of Toeplitz hashing starts with some raw data of size n (produced by the measurement of the quantum state) with a min-entropy of k (the lower bound on its randomness) and a security parameter ε. For example, if we start with an input bit-length of 8 and our min-entropy is 6.7, we can extract 6.7 random bits per 8 bits of raw data, or 80%. With this information, we can find the output length, m. We then construct a Toeplitz matrix with an n + m - 1 random-bit seed and multiply this matrix with the raw data to produce the extracted random data.
 
 ## packages
-
+PyQt5>=5.15
 matplotlib>=3.3.4
-
 numpy>=1.19.5
-
 scipy>=1.5.4
 
-sip>=6.5
 
 ## **tips**
 
