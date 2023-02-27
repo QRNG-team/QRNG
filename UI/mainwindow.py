@@ -486,23 +486,23 @@ class Ui_MainWindow(object):
             self.thread_1.progressBarValue.connect(self.callback)
             self.thread_1.signal_done.connect(self.callback_done)
             self.thread_1.start()
-            self.thread = Detection_Thread(para)  # 将线程thread的信号finishSignal和UI主线程中的槽函数Change进行连接
+            self.thread = Detection_Thread(para, self.standard)  # 将线程thread的信号finishSignal和UI主线程中的槽函数Change进行连接
             self.thread.finishSignal.connect(self.DetectionEnd)
             # 启动线程，执行线程类中run函数
             self.thread.start()
         else:
             self.LogBrowser.append('正在使用 国密GM/T 0005-2021随机数检测标准 对随机数文件进行检测')
             print('Start clicked.')
-            glo.set_value('detectbar', 0)
+            glo.set_value('detectbar2', 0)
             self.rundetection.setEnabled(False)
             self.createProgressBar()
             self.is_done = 0  # 设置完成标记 完成/未完成 1/0
-            self.thread_1 = Runthread(2)
+            self.thread_1 = Runthread(4)
             self.thread_1.progressBarValue.connect(self.callback)
             self.thread_1.signal_done.connect(self.callback_done)
             self.thread_1.start()
-            self.thread = Detection_Thread(para,self.standard)  # 将线程thread的信号finishSignal和UI主线程中的槽函数Change进行连接
-            self.thread.finishSignal.connect(self.DetectionEnd)
+            self.thread = Detection_Thread(para, self.standard)  # 将线程thread的信号finishSignal和UI主线程中的槽函数Change进行连接
+            self.thread.finishSignal.connect(self.Detection2_End)
             # 启动线程，执行线程类中run函数
             self.thread.start()
 
@@ -516,7 +516,7 @@ class Ui_MainWindow(object):
         self.runaccess.setEnabled(False)
         self.createProgressBar()
         self.is_done = 0  # 设置完成标记 完成/未完成 1/0
-        self.thread_1 = Runthread(1)
+        self.thread_1 = Runthread(3)
         self.thread_1.progressBarValue.connect(self.callback)
         self.thread_1.signal_done.connect(self.callback_done)
         self.thread_1.start()
@@ -547,7 +547,19 @@ class Ui_MainWindow(object):
             self.ResultBrowser.append('{:<50s} {:<50s}{:<50s}'.format(lst[i][0], lst[i][1], lst[i][2]))
         self.ResultBrowser.append('检测时间为： %.2f秒 ' % lst[-2])
         self.ResultBrowser.ensureCursorVisible()
-        self.LogBrowser.append(f"完成检测")
+        self.LogBrowser.append(f"完成NIST检测")
+        self.deleteProgressBar()
+        self.rundetection.setEnabled(True)
+
+    def Detection2_End(self, fd, testtime):
+        self.LogBrowser.append(f"国密检测结果已保存到{self.para['fdwname']}]")
+        self.ResultBrowser.append('NIST检测结果如下：')
+        self.ResultBrowser.append('{:<50s}{:<50s}{:<50s}'.format('test item', 'P-value', 'Result'))
+        for i in range(len(lst) - 2):
+            self.ResultBrowser.append('{:<50s} {:<50s}{:<50s}'.format(lst[i][0], lst[i][1], lst[i][2]))
+        self.ResultBrowser.append('检测时间为： %.2f秒 ' % testtime)
+        self.ResultBrowser.ensureCursorVisible()
+        self.LogBrowser.append(f"完成国密检测")
         self.deleteProgressBar()
         self.rundetection.setEnabled(True)
 

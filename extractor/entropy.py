@@ -64,7 +64,7 @@ if __name__ == '__main__':
     flist = []
     for i in range(100):
         flist.append(int(f.readline()))
-    # print(min_entropy(flist))
-    # print(shannon_entropy(flist))
-    print(sample_entropy(flist, 4, 3))
+    print(min_entropy(flist))
+    print(shannon_entropy(flist))
+    print(sample_entropy(flist, 4, 300))
     print(renyi_entropy(flist, 2))

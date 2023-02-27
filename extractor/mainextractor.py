@@ -1,14 +1,14 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import random
-import sys
-import os
 import extractor.ottoeplitz
 import extractor.plotting
 import time
 import sys
 import os
-from PyQt5.QtCore import QThread, pyqtSignal
+from QRNGdetection.autocorrelation_test import *
+from QRNGdetection.binary_derivative_test import *
+from QRNGdetection.poker_test import *
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)) + '\\QRNGdetection')
 import QRNGdetection.sp800_22
@@ -51,8 +51,6 @@ class Extractor:
         self.testtime = 0
         self.speed = 0
         self.t = None
-        self.plt1 = None
-        self.plt2 = None
 
     """ 
     Toeplitz Hashing Example
@@ -62,9 +60,10 @@ class Extractor:
     and after hashing. The data after hashing should be uniform.
 
     """
-    def plot_data(data, t):
+
+    def plot_data(data, t, n):
         """ Bins up data and plots. """
-        N, data =t._calculate_N()
+        N, data = t._calculate_N()
         binned_data, bins = np.histogram(data, bins=2 ** n - 1)
         data_digital = np.digitize(data, bins, right=True)
         fig, ax = plt.subplots()
@@ -74,7 +73,6 @@ class Extractor:
         plt.title("Plotting Data Before and After Hashing")
         plt.show()
         return plt
-
 
     def extract(self):
 
@@ -86,7 +84,7 @@ class Extractor:
         #     temp = random.gauss(5, .05)  #gauss() 是内置的方法random模块。它用于返回具有高斯分布的随机浮点数。
         #     inputdata.append(temp)
         self.t = extractor.ottoeplitz.Toeplitz(inputdata, self.N)  # 生成toeplitz矩阵
-        self.plt1 = self.plot_data(inputdata, self.N, self.t)  # 绘制提取前直方图
+        #self.plt1 = self.plot_data(inputdata, self.N, self.t)  # 绘制提取前直方图
         start = self.get_time()  # 程序运行时间计时
         dist1 = self.t.hash(0)  # 利用toeplitz后提取,参数为是否将二进制转换为十进制，0为不转换
         end = self.get_time()
@@ -94,7 +92,7 @@ class Extractor:
         for subdist in dist1:
             x = str(int(subdist))
             dist += x
-        self.plt2 = self.plot_data(inputdata, self.N, self.t)  # 绘制提取后直方图
+        #self.plt2 = self.plot_data(inputdata, self.N, self.t)  # 绘制提取后直方图
         # extractor.plotting.plot_data(dist, 14)
         self.runtime = end - start
         print('Running time: %.4f Seconds\n' % self.runtime)
@@ -106,12 +104,13 @@ class Extractor:
         outpara.write('提取运行时间: %.4f Seconds\n' % self.runtime)
         self.extractspeed = self.length / (self.runtime * 1000)
         outpara.write('提取速度: %.2f kbps\n' % self.extractspeed)
-        return [self.t.min_ent, self.runtime, self.extractspeed], self.plt1, self.plt2
-
+        return [self.t.min_ent, self.runtime, self.extractspeed]
 
         # 检测
+
     def detection(self):
         test = ''
+        self.testtime = 0
         with open(f"{self.fdrname}") as f:
             for line in f.readlines():
                 line = line.strip()
@@ -125,13 +124,27 @@ class Extractor:
         self.testtime = end - start
         print('**************************************************************************')
         print(len(test))
-        fdresult = open(f'{self.fdwname}/{self.filename}-检测结果-数据：{self.scale}.txt', "w")
+        fdresult = open(f'{self.fdwname}/{self.filename}-NIST检测结果-数据：{self.scale}.txt', "w")
         for result in results:
             (summary_name, summary_p, summary_result) = result
             print(summary_name.ljust(40), summary_p.ljust(28), summary_result, file=fdresult)
-        outpara = open(f'{self.fdwname}/{self.filename}-检测结果-参数：{self.scale}.txt', 'w+')
+        outpara = open(f'{self.fdwname}/{self.filename}-NIST检测结果-参数：{self.scale}.txt', 'w+')
         outpara.write('检测时间: %.4f Seconds\n' % self.testtime)
         return results, self.testtime
+
+    def guomi_detection(self):
+        self.testtime = 0
+        start = self.get_time()
+        fd = self.fdwname + self.filename + " -国密检测结果-数据：{self.scale}.txt"
+        poker(self.fdrname, fd)
+        glo.set_value('detectbar2', 1)
+        autocorrelation(self.fdrname, fd)
+        glo.set_value('detectbar2', 2)
+        binary_derivative(self.fdrname, fd)
+        glo.set_value('detectbar2', 3)
+        end = self.get_time()
+        self.testtime = end - start
+        return fd, self.testtime
 
     def get_time(self):
         if sys.version_info > (3, 8):  # 兼容Python版本

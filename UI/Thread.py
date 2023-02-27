@@ -14,19 +14,19 @@ class Extract_Thread(QThread):
     finishSignal = pyqtSignal(list)
 
     # 带一个参数t
-    def __init__(self, para, hist1, hist2, parent=None):
+    def __init__(self, para, parent=None):
         super(Extract_Thread, self).__init__(parent)
         self.para = para
 
     # run函数是子线程中的操作，线程启动后开始执行
     def run(self):
         ex = Extractor(self.para)
-        exresult, plt1, plt2 = ex.extract()
+        exresult = ex.extract()
         exresult.append(f"提取结果已保存到{self.para['fewname']}")
         # 发射自定义信号
         # 通过emit函数将参数i传递给主线程，触发自定义信号
         self.finishSignal.emit(
-            exresult, plt1, plt2)  # 注意这里与_signal = pyqtSignal(str)中的类型相同
+            exresult)  # 注意这里与_signal = pyqtSignal(str)中的类型相同
 
 
 # 定义一个线程类
@@ -44,15 +44,19 @@ class Detection_Thread(QThread):
 
     # run函数是子线程中的操作，线程启动后开始执行
     def run(self):
-        ex = Extractor(self.para)
-        detectresult, testtime = ex.detection()
-        detectresult.append(testtime)
-        detectresult.append(f"检测结果已保存到{self.para['fdwname']}")
-        # 发射自定义信号
-        # 通过emit函数将参数i传递给主线程，触发自定义信号
-        self.finishSignal.emit(
-            detectresult)  # 注意这里与_signal = pyqtSignal(str)中的类型相同
-
+        if self.standard:
+            ex = Extractor(self.para)
+            detectresult, testtime = ex.detection()
+            detectresult.append(testtime)
+            detectresult.append(f"NIST检测结果已保存到{self.para['fdwname']}")
+            # 发射自定义信号
+            # 通过emit函数将参数i传递给主线程，触发自定义信号
+            self.finishSignal.emit(
+                detectresult)  # 注意这里与_signal = pyqtSignal(str)中的类型相同
+        else:
+            ex1 = Extractor(self.para)
+            fd, testtime = ex1.guomi_detection()
+            self.finishSignal.emit(fd,testtime)  # 注意这里与_signal = pyqtSignal(str)中的类型相同
 
 class Access_Thread(QThread):
     # 自定义信号声明
@@ -72,6 +76,7 @@ class Access_Thread(QThread):
         f = open(self.faname, 'r')
         flist = []
         accessresult = []
+        self.entropypara = list(map(int, self.entropypara))
         for i in range(100):
             flist.append(int(f.readline()))
         if self.list[0] == 1:
@@ -81,7 +86,7 @@ class Access_Thread(QThread):
             num = extractor.entropy.shannon_entropy(flist)
             accessresult.append(f"评估文件的香农熵（shannon entropy)为：{num}")
         if self.list[2] == 1:
-            num = 1  # extractor.entropy.sample_entropy(flist, self.entropypara[0], self.entropypara[1])
+            num = extractor.entropy.sample_entropy(flist, self.entropypara[0], self.entropypara[1])
             accessresult.append(f"评估文件的样本熵（sample entropy)为：{num}")
             accessresult.append(f"样本熵的参数：embedding dimension={self.entropypara[0]}")
             accessresult.append(f"样本熵的参数：tolerance={self.entropypara[1]}")
@@ -115,7 +120,7 @@ class Runthread(QThread):
                 time.sleep(0.2)
             self.signal_done.emit(1)  # 发送结束信号
 
-        if self.flag == 2:  # 负责检测进度条
+        if self.flag == 2:  # 负责NIST检测进度条
             while True:
                 num2 = glo.get_value('detectbar')
                 n = (num2 / 15) * 100
@@ -133,6 +138,16 @@ class Runthread(QThread):
                 if num2 == 15:
                     break
                 time.sleep(0.5)
+            self.signal_done.emit(1)  # 发送结束信号
+
+        if self.flag == 4:  # 负责国密检测进度条
+            while True:
+                num3 = glo.get_value('detectbar2')
+                n = (num3 / 3) * 100
+                self.progressBarValue.emit(n)  # 发送进度条的值信号
+                if num2 == 15:
+                    break
+                time.sleep(0.2)
             self.signal_done.emit(1)  # 发送结束信号
     # def ExeMessageDialog(self):
     #     msg_box = QMessageBox(QMessageBox.Information, '通知', '提取已结束')

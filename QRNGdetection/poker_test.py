@@ -22,6 +22,7 @@ import numpy as np
 import Tool.glo as glo
 import sys
 
+
 def poker_test(bits, m, a):
     """
     poker test
@@ -36,35 +37,36 @@ def poker_test(bits, m, a):
     """
 
     n = len(bits)
-    print("n=",n)
+    print("n=", n)
     # 将带检测序列分为N个长度为m的非重叠子序列
-    N = n//m
-    print("非重叠子序列长度",N)
+    N = n // m
+    print("非重叠子序列长度", N)
     # 统计第i种子序列模式出现的频数
     list_str = ''
-    ni = [0]*(2**m)
+    ni = [0] * (2 ** m)
     for i in range(N):
-        list = bits[i*m : (i+1)*m]
+        list = bits[i * m: (i + 1) * m]
         list_str = [str(i) for i in list]
-  #      print("list_str=",list_str)
+        #      print("list_str=",list_str)
         list_str1 = ''.join(list_str)
-   #     print("list_str1=",list_str1)
+        #     print("list_str1=",list_str1)
         ni[int(list_str1, 2)] += 1
         list_str = ''
     # 计算统计值V
     V = 0
     for v in ni:
-        V += v**2
-    V = (2**m / N)*V - N
+        V += v ** 2
+    V = (2 ** m / N) * V - N
 
     # 计算P-value
-    p_value = ss.gammaincc((2**m - 1)/2, V/2)
+    p_value = ss.gammaincc((2 ** m - 1) / 2, V / 2)
 
-    return [n, m, N, V, a, p_value, p_value>=a]
+    return [n, m, N, V, a, p_value, p_value >= a]
 
-def poker_logs(n, m, N, V, a, p_value, result):
+
+def poker_logs(n, m, N, V, a, p_value, result, out_path):
     try:
-        sys.stdout = glo.Logger('../Detect Result.txt')
+        sys.stdout = glo.Logger(out_path)
         print("\t\t\t       POKER TEST")
         print("\t\t---------------------------------------------")
         print("\t\t COMPUTATIONAL INFORMATION:                  ")
@@ -80,13 +82,9 @@ def poker_logs(n, m, N, V, a, p_value, result):
     finally:
         sys.stdout.reset()
 
-if __name__ == '__main__':
 
-
-  # strs = file_to_bytes("./data/data.sha1")
-  #  bits = bytes_to_base2string(strs)
+def poker(tt_path, out_path):
     test = ''
-    tt_path = 'E:\Project\Python\实验\第二次预实验\实验结果\输入1.140dBm量程0.2V\输入1.140dBm量程0.2V-后提取结果-数据：1068576.txt'
     f = open(tt_path)
     for line in f.readlines():
         line = line.strip()
@@ -95,6 +93,14 @@ if __name__ == '__main__':
     bits = [int(x) for x in nbits]
 
     ret = poker_test(bits, 4, 0.01)
-    poker_logs(*ret)
+    poker_logs(*ret, out_path)
     ret = poker_test(bits, 8, 0.01)
-    poker_logs(*ret)
+    poker_logs(*ret, out_path)
+
+
+if __name__ == '__main__':
+    # strs = file_to_bytes("./data/data.sha1")
+    #  bits = bytes_to_base2string(strs)
+    test = ''
+    tt_path = 'E:\Project\Python\实验\第二次预实验\实验结果\输入1.140dBm量程0.2V\输入1.140dBm量程0.2V-后提取结果-数据：1068576.txt'
+    poker(tt_path,tt_path)

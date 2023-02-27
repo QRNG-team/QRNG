@@ -38,9 +38,9 @@ def autocorrelation_test(bits, d, a):
 
     return [n, S, V, a, p_value, p_value >= a]
 
-def autocorrelation_logs(n, S, V, a, p_value, result):
+def autocorrelation_logs(n, S, V, a, p_value, result, out_path):
     try:
-        sys.stdout = glo.Logger('../Detect Result.txt')
+        sys.stdout = glo.Logger(out_path)
         print("\t\t\t       AUTOCORRELATION TEST")
         print("\t\t---------------------------------------------")
         print("\t\t COMPUTATIONAL INFORMATION:                  ")
@@ -55,7 +55,7 @@ def autocorrelation_logs(n, S, V, a, p_value, result):
     finally:
         sys.stdout.reset()
 
-def autocorrelation(tt_path):
+def autocorrelation(tt_path, out_path):
     test = ''
     f = open(tt_path)
     for line in f.readlines():
@@ -64,13 +64,13 @@ def autocorrelation(tt_path):
     nbits = [v for v in test]
     bits = [int(x) for x in nbits]
     ret = autocorrelation_test(bits, 1, 0.01)
-    autocorrelation_logs(*ret)
+    autocorrelation_logs(*ret, out_path)
     ret = autocorrelation_test(bits, 2, 0.01)
-    autocorrelation_logs(*ret)
+    autocorrelation_logs(*ret, out_path)
     ret = autocorrelation_test(bits, 8, 0.01)
-    autocorrelation_logs(*ret)
+    autocorrelation_logs(*ret, out_path)
     ret = autocorrelation_test(bits, 16, 0.01)
-    autocorrelation_logs(*ret)
+    autocorrelation_logs(*ret, out_path)
 
 if __name__ == '__main__':
     tt_path = 'E:\Project\Python\实验\第二次预实验\实验结果\输入1.140dBm量程0.2V\输入1.140dBm量程0.2V-后提取结果-数据：1068576.txt'
