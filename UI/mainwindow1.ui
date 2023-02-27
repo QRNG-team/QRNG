@@ -151,6 +151,7 @@
     </property>
     <addaction name="openextract"/>
     <addaction name="opendetection"/>
+    <addaction name="openentropy"/>
     <addaction name="separator"/>
     <addaction name="getdetectfolder"/>
     <addaction name="getextractfolder"/>
@@ -174,9 +175,10 @@
    </widget>
    <widget class="QMenu" name="Mentropy">
     <property name="title">
-     <string>熵源</string>
+     <string>熵评估</string>
     </property>
-    <addaction name="entropyset"/>
+    <addaction name="getentropyset"/>
+    <addaction name="entropy"/>
    </widget>
    <widget class="QMenu" name="about">
     <property name="title">
@@ -211,11 +213,13 @@
     <bool>false</bool>
    </attribute>
    <addaction name="openextract"/>
-   <addaction name="opendetection"/>
    <addaction name="getextractfolder"/>
-   <addaction name="getdetectfolder"/>
    <addaction name="runextract"/>
+   <addaction name="separator"/>
+   <addaction name="opendetection"/>
+   <addaction name="getdetectfolder"/>
    <addaction name="rundetection"/>
+   <addaction name="separator"/>
    <addaction name="show"/>
   </widget>
   <action name="openextract">
@@ -299,7 +303,7 @@
      <normaloff>../source/ico/设置.ico</normaloff>../source/ico/设置.ico</iconset>
    </property>
    <property name="text">
-    <string>熵源设置</string>
+    <string>熵评估设置</string>
    </property>
   </action>
   <action name="aboutqrng">
@@ -346,6 +350,70 @@
    </property>
    <property name="text">
     <string>打开待检测文件</string>
+   </property>
+  </action>
+  <action name="getentropyset">
+   <property name="text">
+    <string>熵评估设置</string>
+   </property>
+  </action>
+  <action name="action1_2">
+   <property name="text">
+    <string>1</string>
+   </property>
+  </action>
+  <action name="actiond1">
+   <property name="icon">
+    <iconset>
+     <normaloff>../source/ico/评估.png</normaloff>../source/ico/评估.png</iconset>
+   </property>
+   <property name="text">
+    <string>打开待评估文件</string>
+   </property>
+  </action>
+  <action name="actionyu">
+   <property name="icon">
+    <iconset>
+     <normaloff>../source/ico/play.ico</normaloff>../source/ico/play.ico</iconset>
+   </property>
+   <property name="text">
+    <string>运行评估</string>
+   </property>
+  </action>
+  <action name="actiondakai">
+   <property name="icon">
+    <iconset>
+     <normaloff>../source/ico/打开文件.png</normaloff>../source/ico/打开文件.png</iconset>
+   </property>
+   <property name="text">
+    <string>打开待评估文件</string>
+   </property>
+  </action>
+  <action name="action1_3">
+   <property name="icon">
+    <iconset>
+     <normaloff>../source/ico/评估.png</normaloff>../source/ico/评估.png</iconset>
+   </property>
+   <property name="text">
+    <string>运行评估</string>
+   </property>
+  </action>
+  <action name="openentropy">
+   <property name="icon">
+    <iconset>
+     <normaloff>../source/ico/打开文件.png</normaloff>../source/ico/打开文件.png</iconset>
+   </property>
+   <property name="text">
+    <string>打开待评估文件</string>
+   </property>
+  </action>
+  <action name="entropy">
+   <property name="icon">
+    <iconset>
+     <normaloff>../source/ico/评估.png</normaloff>../source/ico/评估.png</iconset>
+   </property>
+   <property name="text">
+    <string>运行评估</string>
    </property>
   </action>
  </widget>

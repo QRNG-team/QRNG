@@ -1,4 +1,23 @@
 # -*- coding: utf-8 -*-
+import sys
+class Logger(object):
+    def __init__(self, filename="Detection.log"):
+        self.terminal = sys.stdout
+        self.log = open(filename, "a")
+        # 可以选择"w"
+        self.log = open(filename, "a", encoding="utf-8")  # 防止编码错误
+
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+
+    def flush(self):
+        pass
+
+    def reset(self):
+        self.log.close()
+        sys.stdout = self.terminal
+
 def _init():#初始化
     global _global_dict
     _global_dict = {}

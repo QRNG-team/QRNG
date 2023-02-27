@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mainwindow.ui'
+# Form implementation generated from reading ui file 'mainwindow1.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -12,11 +12,15 @@ from PyQt5.QtPrintSupport import *
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
+
+from PyQt5.QtWidgets import QMainWindow
+from UI import *
 from extractor import mainextractor, ottoeplitz, plotting
 from extractor.mainextractor import Extractor
 from UI.Thread import *
-import extractorset
+from UI import extractorset, detectionset, entropyset
 import Tool.glo as glo
+
 
 class Ui_MainWindow(object):
     """
@@ -28,12 +32,20 @@ class Ui_MainWindow(object):
         self.thread_1 = None
         self.N = 0
         self.scale = 0
-        self.fername = None
-        self.fewname = None
-        self.filename = None
-        self.fdrname = None
-        self.fdwname = None
+        self.fername = None  # 待提取文件
+        self.fewname = None  # 提取结果文件
+        self.filename = None  # 文件
+        self.fdrname = None  # 待检测文件
+        self.fdwname = None  # 检测结果文件
+        self.faname = None  # 待评估文件
         self.printer = QPrinter()
+        self.entropylist = [0, 0, 0, 0]
+        self.entropypara = [0, 0, 0]
+        self.standard = True
+        self.countEntropy = 0
+        self.extractlist = [0, 0, 0, 0]
+        # 一定要在主窗口类的初始化函数中对子窗口进行实例化，如果在其他函数中实例化子窗口
+        # 可能会出现子窗口闪退的问题
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -194,8 +206,20 @@ class Ui_MainWindow(object):
         icon10.addPixmap(QtGui.QPixmap("../source/ico/打开文件夹.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.opendetection.setIcon(icon10)
         self.opendetection.setObjectName("opendetection")
+        self.openAccess = QtWidgets.QAction(MainWindow)
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(QtGui.QPixmap("../source/ico/打开文件.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.openAccess.setIcon(icon11)
+        self.openAccess.setObjectName("openAccess")
+        self.runaccess = QtWidgets.QAction(MainWindow)
+        icon12 = QtGui.QIcon()
+        icon12.addPixmap(QtGui.QPixmap("../source/ico/评估.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.runaccess.setIcon(icon12)
+        self.runaccess.setObjectName("runaccess")
+
         self.Mfile.addAction(self.openextract)
         self.Mfile.addAction(self.opendetection)
+        self.Mfile.addAction(self.openAccess)
         self.Mfile.addSeparator()
         self.Mfile.addAction(self.getdetectfolder)
         self.Mfile.addAction(self.getextractfolder)
@@ -207,6 +231,7 @@ class Ui_MainWindow(object):
         self.Mdetection.addAction(self.rundetection)
         self.Mdetection.addAction(self.detectionset)
         self.Mentropy.addAction(self.entropyset)
+        self.Mentropy.addAction(self.runaccess)
         self.about.addAction(self.aboutqrng)
         self.about.addAction(self.aboutqt)
         self.Mshow.addAction(self.show)
@@ -219,10 +244,15 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.about.menuAction())
         self.toolBar.addAction(self.openextract)
         self.toolBar.addAction(self.opendetection)
+        self.toolBar.addAction(self.openAccess)
+        self.toolBar.addSeparator()
         self.toolBar.addAction(self.getextractfolder)
         self.toolBar.addAction(self.getdetectfolder)
+        self.toolBar.addSeparator()
         self.toolBar.addAction(self.runextract)
         self.toolBar.addAction(self.rundetection)
+        self.toolBar.addAction(self.runaccess)
+        self.toolBar.addSeparator()
         self.toolBar.addAction(self.show)
 
         self.retranslateUi(MainWindow)
@@ -235,6 +265,8 @@ class Ui_MainWindow(object):
         self.openextract.triggered.connect(self.openExtractFile)
         self.opendetection.setShortcut('Ctrl+shift+D')
         self.opendetection.triggered.connect(self.openDetectionFile)
+        self.opendetection.setShortcut('Ctrl+shift+A')
+        self.openAccess.triggered.connect(self.openAccessFile)
         self.getextractfolder.triggered.connect(self.getExtractFolder)
         self.getdetectfolder.triggered.connect(self.getDetectionFolder)
         self.setpage.setShortcut('Ctrl+P')
@@ -244,7 +276,11 @@ class Ui_MainWindow(object):
         self.runextract.triggered.connect(self.runExtract)
         self.rundetection.setShortcut('Ctrl+D')
         self.rundetection.triggered.connect(self.runDetection)
+        self.runaccess.setShortcut('Ctrl+D')
+        self.runaccess.triggered.connect(self.runAccess)
         self.extractorset.triggered.connect(self.extractorSet)
+        self.detectionset.triggered.connect(self.detectionSet)
+        self.entropyset.triggered.connect(self.entropySet)
 
         glo._init()  # 先必须在主模块初始化（只在Main模块需要一次即可）
         # 定义跨模块全局变量
@@ -256,7 +292,7 @@ class Ui_MainWindow(object):
         self.Mfile.setTitle(_translate("MainWindow", "文件"))
         self.Mextractor.setTitle(_translate("MainWindow", "提取"))
         self.Mdetection.setTitle(_translate("MainWindow", "检测"))
-        self.Mentropy.setTitle(_translate("MainWindow", "熵源"))
+        self.Mentropy.setTitle(_translate("MainWindow", "熵评估"))
         self.about.setTitle(_translate("MainWindow", "关于"))
         self.Mshow.setTitle(_translate("MainWindow", "展示"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
@@ -269,13 +305,15 @@ class Ui_MainWindow(object):
         self.rundetection.setText(_translate("MainWindow", "运行检测"))
         self.detectionset.setText(_translate("MainWindow", "检测设置"))
         self.detectionset.setIconText(_translate("MainWindow", "检测设置"))
-        self.entropyset.setText(_translate("MainWindow", "熵源设置"))
+        self.entropyset.setText(_translate("MainWindow", "熵评估设置"))
+        self.runaccess.setText(_translate("MainWindow", "运行评估"))
         self.aboutqrng.setText(_translate("MainWindow", "关于QRNG"))
         self.aboutqt.setText(_translate("MainWindow", "关于Qt"))
         self.show.setText(_translate("MainWindow", "展示结果"))
         self.showset.setText(_translate("MainWindow", "结果展示设置"))
         self.getdetectfolder.setText(_translate("MainWindow", "设置检测文件路径"))
         self.opendetection.setText(_translate("MainWindow", "打开待检测文件"))
+        self.openAccess.setText(_translate("MainWindow", "打开待评估文件"))
 
     def openExtractFile(self):
         fname = QtWidgets.QFileDialog.getOpenFileName(None, 'open', '.\\', "Images (*.png *.csv *txt *.jpg)")
@@ -284,7 +322,7 @@ class Ui_MainWindow(object):
         #     with f:
         #         data = f.read()
         if len(fname[0]):
-            self.LogBrowser.append(f"已成功导入原始序列文件：{fname[0]}")
+            self.LogBrowser.append(f"已成功导入待提取文件：{fname[0]}")
         # l = fname[0].rsplit('/', 1)
         # print(l)
         self.fername = fname[0]
@@ -305,17 +343,82 @@ class Ui_MainWindow(object):
         self.filename = "detection"
         # self.filename = l[-1]
 
-    def extractorSet(self):
-        self.exwin = extractorset.Ui_Form()
-        self.window2.before_close_signal.connect(extractorset.echo)
+    def openAccessFile(self):
+        fname = QtWidgets.QFileDialog.getOpenFileName(None, 'open', '.\\', "Images (*.png *.csv *txt *.jpg)")
+        # if fname[0]:
+        #     f = open(fname[0], 'r')
+        #     with f:
+        #         data = f.read()
+        if len(fname[0]):
+            self.LogBrowser.append(f"已成功导入待评估文件：{fname[0]}")
+        # l = fname[0].rsplit('/', 1)
+        # print(l)
+        self.faname = fname[0]
+        self.filename = "Access"
+        # self.filename = l[1]
+
+    def extractorSet(self):  # 提取设置窗口
+        self.exwin = extractorset.Ui_exwin(self.extractlist, self.countEntropy)
+        # 连接信号
+        self.exwin.signal.connect(self.getexwin)
+        self.exwin.show()
+
+    def getexwin(self, lst, para):  # 接收提取设置和熵评估计算设置
+        self.extractlist = lst
+        self.countEntropy = para
+
+    def detectionSet(self):  # 检测设置窗口
+        # 连接信号
+        self.exdec = detectionset.Ui_exdec(self.standard)
+        self.exdec.signal.connect(self.getdetectwin)
+        self.exdec.show()
+        # self._signal.emit(self.entropylist, self.entropypara)
+
+    def getdetectwin(self, standard):  # 接收用户所选择的检测标准
+        self.standard = standard
+        if self.standard:
+            self.LogBrowser.append(f"已选择随机数检测标准为：NIST SP800-22r1a")
+        else:
+            self.LogBrowser.append(f"已选择随机数检测标准为：国密GM/T 0005-2021")
+        print(standard)
+
+    def entropySet(self):  # 评估设置窗口
+        self.accesswin = entropyset.Ui_widget(self.entropylist, self.entropypara)
+        # 连接信号
+        self.accesswin.signal.connect(self.getaccesswin)
+        self.accesswin.show()
+
+    def getaccesswin(self, lst, para):  # 接收熵评估计算选择和参数
+        self.entropylist = lst
+        self.entropypara = para
+        print(lst, para)
+        ans1 = "最小熵"
+        ans2 = "香农熵"
+        ans3 = "样本熵"
+        ans4 = "瑞丽熵"
+        p1 = "embedding dimension"
+        p2 = "tolerance"
+        p3 = "order"
+        entropyAns = ""
+        paraAns = ""
+        if self.entropylist[0]:
+            entropyAns = entropyAns + ans1 + " "
+        if self.entropylist[1]:
+            entropyAns = entropyAns + ans2 + " "
+        if self.entropylist[2]:
+            entropyAns = entropyAns + ans3 + " "
+            paraAns = paraAns + p1 + "=" + str(self.entropypara[0]) + "; "
+            paraAns = paraAns + p2 + "=" + str(self.entropypara[1]) + "; "
+        if self.entropylist[3]:
+            entropyAns = entropyAns + ans4 + " "
+            paraAns = paraAns + p3 + "=" + str(self.entropypara[2]) + "; "
+        self.LogBrowser.append(f"已选择熵评估种类为{entropyAns}")
+        self.LogBrowser.append(f"所选择的熵参数为{paraAns}")
 
     def getExtractFolder(self):
         self.fewname = QtWidgets.QFileDialog.getExistingDirectory()
         if len(self.fewname):
             self.LogBrowser.append(f"输出序列结果所在文件夹已设置为{self.fewname}")
-        # if fileName[0]:
-        #     with open(fileName[0], 'w', encoding='gb18030', errors='ignore') as f:
-        #         f.write(self.tx.toPlainText())
 
     def getDetectionFolder(self):
         self.fdwname = QtWidgets.QFileDialog.getExistingDirectory()
@@ -346,7 +449,7 @@ class Ui_MainWindow(object):
                 "fdrname": self.fdrname, "fdwname": self.fdwname,
                 "filename": self.filename}
         print('Start clicked.')
-        glo.set_value('extractbar', 0) #进度条进度设置，采用跨文件全部变量
+        glo.set_value('extractbar', 0)  # 进度条进度设置，采用跨文件全部变量
         self.runextract.setEnabled(False)
         self.createProgressBar()
         self.is_done = 0  # 设置完成标记 完成/未完成 1/0
@@ -372,17 +475,54 @@ class Ui_MainWindow(object):
         para = {"fername": self.fername, "fewname": self.fewname, "scale": self.scale, "N": self.N,
                 "fdrname": self.fdrname, "fdwname": self.fdwname,
                 "filename": self.filename}
+        if self.standard:
+            self.LogBrowser.append('正在使用 NIST SP800-22r1a随机数检测标准 对随机数文件进行检测')
+            print('Start clicked.')
+            glo.set_value('detectbar', 0)
+            self.rundetection.setEnabled(False)
+            self.createProgressBar()
+            self.is_done = 0  # 设置完成标记 完成/未完成 1/0
+            self.thread_1 = Runthread(2)
+            self.thread_1.progressBarValue.connect(self.callback)
+            self.thread_1.signal_done.connect(self.callback_done)
+            self.thread_1.start()
+            self.thread = Detection_Thread(para)  # 将线程thread的信号finishSignal和UI主线程中的槽函数Change进行连接
+            self.thread.finishSignal.connect(self.DetectionEnd)
+            # 启动线程，执行线程类中run函数
+            self.thread.start()
+        else:
+            self.LogBrowser.append('正在使用 国密GM/T 0005-2021随机数检测标准 对随机数文件进行检测')
+            print('Start clicked.')
+            glo.set_value('detectbar', 0)
+            self.rundetection.setEnabled(False)
+            self.createProgressBar()
+            self.is_done = 0  # 设置完成标记 完成/未完成 1/0
+            self.thread_1 = Runthread(2)
+            self.thread_1.progressBarValue.connect(self.callback)
+            self.thread_1.signal_done.connect(self.callback_done)
+            self.thread_1.start()
+            self.thread = Detection_Thread(para,self.standard)  # 将线程thread的信号finishSignal和UI主线程中的槽函数Change进行连接
+            self.thread.finishSignal.connect(self.DetectionEnd)
+            # 启动线程，执行线程类中run函数
+            self.thread.start()
+
+    def runAccess(self):
+        if self.faname is None:
+            self.LogBrowser.append(f"评估文件不能为空")
+            return
+        self.LogBrowser.append(f"正在评估{self.faname}")
         print('Start clicked.')
-        glo.set_value('detectbar', 0)
-        self.rundetection.setEnabled(False)
+        glo.set_value('accessbar', 0)  # 进度条进度设置，采用跨文件全部变量
+        self.runaccess.setEnabled(False)
         self.createProgressBar()
         self.is_done = 0  # 设置完成标记 完成/未完成 1/0
-        self.thread_1 = Runthread(2)
+        self.thread_1 = Runthread(1)
         self.thread_1.progressBarValue.connect(self.callback)
         self.thread_1.signal_done.connect(self.callback_done)
         self.thread_1.start()
-        self.thread = Detection_Thread(para)  # 将线程thread的信号finishSignal和UI主线程中的槽函数Change进行连接
-        self.thread.finishSignal.connect(self.DetectionEnd)
+        self.thread = Access_Thread(self.entropylist,
+                                    self.entropypara, self.faname)  # 将线程thread的信号finishSignal和UI主线程中的槽函数Change进行连接
+        self.thread.finishSignal.connect(self.AccessEnd)
         # 启动线程，执行线程类中run函数
         self.thread.start()
 
@@ -396,6 +536,7 @@ class Ui_MainWindow(object):
         self.ResultBrowser.ensureCursorVisible()
         self.LogBrowser.append(f"完成提取")
         self.deleteProgressBar()
+
         self.runextract.setEnabled(True)
 
     def DetectionEnd(self, lst):
@@ -403,10 +544,20 @@ class Ui_MainWindow(object):
         self.ResultBrowser.append('NIST检测结果如下：')
         self.ResultBrowser.append('{:<50s}{:<50s}{:<50s}'.format('test item', 'P-value', 'Result'))
         for i in range(len(lst) - 2):
-            self.ResultBrowser.append('{:<50s} {:<50s}{:<50s}'.format(lst[i][0],lst[i][1],lst[i][2]))
+            self.ResultBrowser.append('{:<50s} {:<50s}{:<50s}'.format(lst[i][0], lst[i][1], lst[i][2]))
         self.ResultBrowser.append('检测时间为： %.2f秒 ' % lst[-2])
         self.ResultBrowser.ensureCursorVisible()
         self.LogBrowser.append(f"完成检测")
+        self.deleteProgressBar()
+        self.rundetection.setEnabled(True)
+
+    def AccessEnd(self, lst):
+        self.LogBrowser.append(lst[-1])
+        self.ResultBrowser.append('量子随机数熵评估结果如下：')
+        for i in range(len(lst) - 1):
+            self.ResultBrowser.append(lst[i])
+        self.ResultBrowser.ensureCursorVisible()
+        self.LogBrowser.append(f"完成评估")
         self.deleteProgressBar()
         self.rundetection.setEnabled(True)
 
@@ -429,7 +580,6 @@ class Ui_MainWindow(object):
     def deleteProgressBar(self):
         # 删除进度条
         self.progressBar.close()
-
 
     # 回传进度条参数
     def callback(self, i):

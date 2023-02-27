@@ -1,63 +1,58 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QWidget ,QPushButton ,QTextEdit ,QVBoxLayout ,QFileDialog ,QDialog
-from PyQt5.QtPrintSupport import QPrinter ,QPrintDialog ,QPageSetupDialog
-
 import sys
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
 
-class printDialogDemo(QWidget):
-    def __init__(self):
-        super(printDialogDemo, self).__init__()
+class InputDialogDemo(QWidget):
+    def __init__(self,parent=None):
+        super(InputDialogDemo, self).__init__(parent)
 
-        # 创建打印机对象
-        self.printer = QPrinter()
+        #表单布局
+        layout=QFormLayout()
 
-        # 创建三个按钮
-        self.btn1 = QPushButton("打开文件") # 打开文件并且将文件内容显示在TextEdit中
-        self.btn2 = QPushButton("弹出打印设置窗口") # 弹出打印设置窗口
-        self.btn3 = QPushButton("打印") # 进行打印
+        #创建按钮，当行文本框并建立按钮点击与槽函数的联系，添加到布局中
+        self.btn1=QPushButton('获得列表里的选项')
+        self.btn1.clicked.connect(self.getItem)
+        self.Le1=QLineEdit()
 
-        # 创建文本框，用于显示打印的文本内容
-        self.textEdit = QTextEdit()
+        layout.addRow(self.btn1,self.Le1)
 
-        # 设置垂直布局将控件放入
-        layout = QVBoxLayout()
-        layout.addWidget(self.btn1)
-        layout.addWidget(self.btn2)
-        layout.addWidget(self.btn3)
-        layout.addWidget(self.textEdit)
+        # 创建按钮，当行文本框并建立按钮点击与槽函数的联系，添加到布局中
+        self.btn2=QPushButton('获得字符串')
+        self.btn2.clicked.connect(self.getText)
+        self.le2=QLineEdit()
+        layout.addRow(self.btn2,self.le2)
 
-        # 将布局设置在窗口
+        # 创建按钮，当行文本框并建立按钮点击与槽函数的联系，添加到布局中
+        self.btn3 = QPushButton('获得整数')
+        self.btn3.clicked.connect(self.getInt)
+        self.le3 = QLineEdit()
+        layout.addRow(self.btn3, self.le3)
+
+        #设置主窗口的布局及标题
         self.setLayout(layout)
-        self.setWindowTitle("利用PyQt5进行文件打印")
+        self.setWindowTitle('Input Dialog例子')
+    def getItem(self):
+        #创建元组并定义初始值
+        items=('C','C++','C#','JAva','Python')
+        #获取item输入的值，以及ok键的点击与否（True 或False）
+        #QInputDialog.getItem(self,标题,文本,元组,元组默认index,是否允许更改)
+        item,ok=QInputDialog.getItem(self,"select input dialog",'语言列表',items,0,False)
 
-        # 按钮设置槽函数
-        self.btn1.clicked.connect(self.openFile)
-        self.btn2.clicked.connect(self.showSettingsDialog)
-        self.btn3.clicked.connect(self.showPrintDialog)
+        if ok and item:
+            #满足条件时，设置单行文本框的文本
+            self.Le1.setText(item)
+    def getText(self):
+        text,ok=QInputDialog.getText(self,'Text Input Dialog','输入姓名：')
+        if ok:
+            self.le2.setText(str(text))
 
-    def openFile(self):
-        fname = QFileDialog.getOpenFileName(self ,"打开文件" ,".")
-        if fname[0]:
-            # 打开文件，将文件的内容显示在文本框中
-            with open(fname[0] ,'r' ,encoding="utf-8") as f:
-                self.textEdit.setText(f.read())
-
-    def showSettingsDialog(self):
-        settingsDialog = QPageSetupDialog(self.printer ,self) # 在当前窗口针对打印机对象弹出设置对话框
-        settingsDialog.exec() # 循环
-
-    def showPrintDialog(self):
-        printerDialog = QPrintDialog(self.printer ,self) # 在当前窗口针对打印机对象弹出打印对话框
-        # printerDialog.exec()表示等待用户的操作，QDialog.Accepted表示用户操作了类似于确认的操作，当用户的操作时确认的操作时，执行if下面的语句
-        if QDialog.Accepted == printerDialog.exec():
-            self.textEdit.print(self.printer)
-
+    def getInt(self):
+        num,ok=QInputDialog.getInt(self,'Integer input dualog','输入数字')
+        if ok:
+            self.le3.setText(str(num))
 if __name__ == '__main__':
-    print('{:<80s}{:<80s}{:<80s}'.format('test：', 'p-value', 'result'))
-    print('{:<80s}{:<80s}{:<80s}'.format('monobit_test', '0.21086686163724397', 'PASS'))
-    print('{:<80s}{:<80s}{:<80s}'.format('frequency_within_block_test','0.21086686163724397', 'PASS'))
-    print('{:<80s}{:<80s}{:<80s}'.format('runs_test', '0.1529439388607733', 'PASS'))
-    app = QtWidgets.QApplication(sys.argv)
-    mainWin = printDialogDemo()
-    mainWin.show()
-    app.exec_()
+    app=QApplication(sys.argv)
+    demo=InputDialogDemo()
+    demo.show()
+    sys.exit(app.exec_())
