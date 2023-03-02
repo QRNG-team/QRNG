@@ -34,7 +34,7 @@ class Detection_Thread(QThread):
     # 自定义信号声明
     # 使用自定义信号和UI主线程通讯，参数是发送信号时附带参数的数据类型，可以是str、int、list等
     finishSignal = pyqtSignal(list)
-    pb = pyqtSignal(int)
+    fb = pyqtSignal(str, float)
 
     # 带一个参数t
     def __init__(self, para, standard, parent=None):
@@ -56,7 +56,9 @@ class Detection_Thread(QThread):
         else:
             ex1 = Extractor(self.para)
             fd, testtime = ex1.guomi_detection()
-            self.finishSignal.emit(fd,testtime)  # 注意这里与_signal = pyqtSignal(str)中的类型相同
+            print(fd)
+            self.fb.emit(fd, testtime)  # 注意这里与_signal = pyqtSignal(str)中的类型相同
+
 
 class Access_Thread(QThread):
     # 自定义信号声明
@@ -145,7 +147,7 @@ class Runthread(QThread):
                 num3 = glo.get_value('detectbar2')
                 n = (num3 / 3) * 100
                 self.progressBarValue.emit(n)  # 发送进度条的值信号
-                if num2 == 15:
+                if num3 == 15:
                     break
                 time.sleep(0.2)
             self.signal_done.emit(1)  # 发送结束信号

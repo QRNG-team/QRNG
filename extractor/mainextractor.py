@@ -135,7 +135,8 @@ class Extractor:
     def guomi_detection(self):
         self.testtime = 0
         start = self.get_time()
-        fd = self.fdwname + self.filename + " -国密检测结果-数据：{self.scale}.txt"
+        fd = self.fdwname + "/" + self.filename + f"-国密检测结果-数据：{self.scale}.txt"
+        print(fd)
         poker(self.fdrname, fd)
         glo.set_value('detectbar2', 1)
         autocorrelation(self.fdrname, fd)
@@ -144,6 +145,8 @@ class Extractor:
         glo.set_value('detectbar2', 3)
         end = self.get_time()
         self.testtime = end - start
+        outpara = open(f'{fd}-国密检测结果-参数：{self.scale}.txt', 'w+')
+        outpara.write('检测时间: %.4f Seconds\n' % self.testtime)
         return fd, self.testtime
 
     def get_time(self):
