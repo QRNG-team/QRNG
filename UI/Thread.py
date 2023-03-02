@@ -151,12 +151,4 @@ class Runthread(QThread):
                     break
                 time.sleep(0.2)
             self.signal_done.emit(1)  # 发送结束信号
-    # def ExeMessageDialog(self):
-    #     msg_box = QMessageBox(QMessageBox.Information, '通知', '提取已结束')
-    #     self.pb.setValue(100)  # 如果爬取成功
-    #     msg_box.exec_()
-    #
-    # def detectMessageDialog(self):
-    #     msg_box = QMessageBox(QMessageBox.Information, '通知', '检测已结束')
-    #     self.pb.setValue(100)  # 如果爬取成功
-    #     msg_box.exec_()
+

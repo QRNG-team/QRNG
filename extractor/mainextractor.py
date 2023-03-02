@@ -26,16 +26,6 @@ which is responsible for removing noise and extracting truly random numbers usin
 """
 
 
-# ori_route = '../../实验/第二次预实验/第二次预实验txt'  # 原始数据文件路径
-# filename = '输入4.135dBm量程0.2V'  # 实验数据类型
-# fin_route = '../../实验/第二次预实验/实验结果'  # 提取后数据文件路径
-# frname = f'{ori_route}/{filename}.txt'
-# fwname = f'{fin_route}/{filename}'
-# input = []  # 输入序列数据
-# N = 14  # 采样位数
-# scale = 2 ** 17 + 20000  # 输入数据规模
-
-
 class Extractor:
     def __init__(self, para):
         self.filename = para["filename"]

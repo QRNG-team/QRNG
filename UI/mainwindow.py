@@ -314,45 +314,26 @@ class Ui_MainWindow(object):
 
     def openExtractFile(self):
         fname = QtWidgets.QFileDialog.getOpenFileName(None, 'open', '.\\', "Images (*.png *.csv *txt *.jpg)")
-        # if fname[0]:
-        #     f = open(fname[0], 'r')
-        #     with f:
-        #         data = f.read()
         if len(fname[0]):
             self.LogBrowser.append(f"已成功导入待提取文件：{fname[0]}")
-        # l = fname[0].rsplit('/', 1)
-        # print(l)
         self.fername = fname[0]
         self.filename = "extract"
-        # self.filename = l[1]
+
 
     def openDetectionFile(self):
         fname = QtWidgets.QFileDialog.getOpenFileName(None, 'open', '.\\', "Images (*.png *.csv *txt *.jpg)")
-        # if fname[0]:
-        #     f = open(fname[0], 'r')
-        #     with f:
-        #         data = f.read()
         if len(fname[0]):
             self.LogBrowser.append(f"已成功导入待检测文件：{fname[0]}")
-        # l = fname[0].rsplit('/',1)
-        # print(l)
         self.fdrname = fname[0]
         self.filename = "detection"
-        # self.filename = l[-1]
 
     def openAccessFile(self):
         fname = QtWidgets.QFileDialog.getOpenFileName(None, 'open', '.\\', "Images (*.png *.csv *txt *.jpg)")
-        # if fname[0]:
-        #     f = open(fname[0], 'r')
-        #     with f:
-        #         data = f.read()
         if len(fname[0]):
             self.LogBrowser.append(f"已成功导入待评估文件：{fname[0]}")
-        # l = fname[0].rsplit('/', 1)
         # print(l)
         self.faname = fname[0]
         self.filename = "Access"
-        # self.filename = l[1]
 
     def extractorSet(self):  # 提取设置窗口
         self.exwin = extractorset.Ui_exwin(self.extractlist, self.countEntropy)
@@ -369,7 +350,6 @@ class Ui_MainWindow(object):
         self.exdec = detectionset.Ui_exdec(self.standard)
         self.exdec.signal.connect(self.getdetectwin)
         self.exdec.show()
-        # self._signal.emit(self.entropylist, self.entropypara)
 
     def getdetectwin(self, standard):  # 接收用户所选择的检测标准
         self.standard = standard
