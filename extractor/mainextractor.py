@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random
 import extractor.ottoeplitz
-import extractor.plotting
 import time
 import sys
 import os

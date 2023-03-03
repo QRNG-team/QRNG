@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
 from PyQt5.QtWidgets import QMainWindow
 from UI import *
-from extractor import mainextractor, ottoeplitz, plotting
+from extractor import mainextractor, ottoeplitz
 from extractor.mainextractor import Extractor
 from UI.Thread import *
 from UI import extractorset, detectionset, entropyset
