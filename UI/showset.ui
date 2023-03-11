@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>343</width>
-    <height>380</height>
+    <width>558</width>
+    <height>534</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,15 +16,15 @@
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>40</y>
-     <width>185</width>
-     <height>301</height>
+     <x>60</x>
+     <y>30</y>
+     <width>251</width>
+     <height>141</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QRadioButton" name="radioButton">
+     <widget class="QRadioButton" name="noshow">
       <property name="font">
        <font>
         <family>黑体</family>
@@ -32,12 +32,12 @@
        </font>
       </property>
       <property name="text">
-       <string>原始随机数生成速率</string>
+       <string>不输出随机数分布图</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="radioButton_3">
+     <widget class="QRadioButton" name="followextract">
       <property name="font">
        <font>
         <family>黑体</family>
@@ -45,12 +45,12 @@
        </font>
       </property>
       <property name="text">
-       <string>提取随机数速率</string>
+       <string>随提取过程输出随机数分布图</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="radioButton_4">
+     <widget class="QRadioButton" name="custom">
       <property name="font">
        <font>
         <family>黑体</family>
@@ -58,63 +58,96 @@
        </font>
       </property>
       <property name="text">
-       <string>提取用时</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QRadioButton" name="radioButton_5">
-      <property name="font">
-       <font>
-        <family>黑体</family>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>显示熵源信息</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QRadioButton" name="radioButton_6">
-      <property name="font">
-       <font>
-        <family>黑体</family>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>显示AD采集器设置</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QRadioButton" name="radioButton_2">
-      <property name="font">
-       <font>
-        <family>黑体</family>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>显示随机数分布直方图</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QRadioButton" name="radioButton_7">
-      <property name="font">
-       <font>
-        <family>黑体</family>
-        <pointsize>12</pointsize>
-       </font>
-      </property>
-      <property name="text">
-       <string>显示最小熵</string>
+       <string>自定义输出随机数分布图</string>
       </property>
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QWidget" name="horizontalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>290</y>
+     <width>444</width>
+     <height>73</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QPushButton" name="afterfile">
+      <property name="font">
+       <font>
+        <family>Adobe 黑体 Std R</family>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>请选择提取后随机数文件</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTextBrowser" name="textBrowser_3"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="horizontalLayoutWidget_2">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>210</y>
+     <width>444</width>
+     <height>73</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QPushButton" name="beforefile">
+      <property name="text">
+       <string>请选择提取前随机数文件</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTextBrowser" name="textBrowser_4"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="horizontalLayoutWidget_3">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>370</y>
+     <width>444</width>
+     <height>73</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <item>
+     <widget class="QPushButton" name="outputposition">
+      <property name="text">
+       <string>请选择图像输出位置</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTextBrowser" name="textBrowser_5"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>370</x>
+     <y>470</y>
+     <width>156</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
   </widget>
  </widget>
  <resources/>

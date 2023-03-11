@@ -40,6 +40,7 @@ class Extractor:
         self.testtime = 0
         self.speed = 0
         self.t = None
+        self.isplt = para["isplt"]
 
     """ 
     Toeplitz Hashing Example
@@ -50,38 +51,62 @@ class Extractor:
 
     """
 
-    def plot_data(data, t, n):
+    def plot_data(self, n, flag, isplt, inputdata):
         """ Bins up data and plots. """
-        N, data = t._calculate_N()
+        self.t = extractor.ottoeplitz.Toeplitz(inputdata, self.N)  # 生成toeplitz矩阵
+        N, data = self.t._calculate_N()
         binned_data, bins = np.histogram(data, bins=2 ** n - 1)
         data_digital = np.digitize(data, bins, right=True)
         fig, ax = plt.subplots()
         ax.hist(data_digital, bins=2 ** n - 1, label='Digitized Raw Data')
         plt.xlabel('Random numbers')
         plt.ylabel('Frequency')
-        plt.title("Plotting Data Before and After Hashing")
+        if flag:
+            plt.title("Plotting Data After extracting")
+            if isplt == 1:
+                plt.savefig(f'{self.fewname}/after_extract.png')
+            else:
+                plt.savefig(f'{self.filename}/after_extract.png')
+        else:
+            plt.title("Plotting Data Before extracting")
+            if isplt == 1:
+                plt.savefig(f'{self.fewname}/before_extract.png')
+            else:
+                plt.savefig(f'{self.filename}/before_extract.png')
         plt.show()
-        return plt
+        return
+
+    def file_to_array(self, fname, scale):
+        input = []
+        print(scale)
+        with open(f'{fname}', mode='r') as fdata:
+            for i in range(scale):
+                input.append(int(fdata.readline()))
+        return np.array(input)
 
     def extract(self):
-
-        with open(f'{self.fername}', mode='r') as fdata:
-            for i in range(self.scale):
-                self.input.append(int(fdata.readline()))
-        inputdata = np.array(self.input)
+        inputdata = self.file_to_array(self.fername, self.scale)
         # for i in range(2**19):
         #     temp = random.gauss(5, .05)  #gauss() 是内置的方法random模块。它用于返回具有高斯分布的随机浮点数。
         #     inputdata.append(temp)
         self.t = extractor.ottoeplitz.Toeplitz(inputdata, self.N)  # 生成toeplitz矩阵
-        #self.plt1 = self.plot_data(inputdata, self.N, self.t)  # 绘制提取前直方图
         start = self.get_time()  # 程序运行时间计时
-        dist1 = self.t.hash(0)  # 利用toeplitz后提取,参数为是否将二进制转换为十进制，0为不转换
+        if self.isplt == 1:
+            self.plt1 = self.plot_data(self.N, 0, self.isplt, inputdata)  # 绘制提取前直方图
+            dist1, dist2 = self.t.hash(1)  # 利用toeplitz后提取,参数为是否将二进制转换为十进制，0为不转换
+            output1 = open(f'{self.fewname}/{self.filename}-decimal：{self.scale}.txt', 'w')
+            for i in range(len(dist2)-1):
+                output1.write(f"{str(dist2[i])}\n")
+            self.plt2 = self.plot_data(self.N, 1, self.isplt, dist2)  # 绘制提取前直方图
+        else:
+            dist1, dist2 = self.t.hash(0)  # 利用toeplitz后提取,参数为是否将二进制转换为十进制，0为不转换
         end = self.get_time()
         dist = ''
         for subdist in dist1:
             x = str(int(subdist))
             dist += x
-        #self.plt2 = self.plot_data(inputdata, self.N, self.t)  # 绘制提取后直方图
+        if self.isplt == 1:
+            self.plt2 = self.plot_data(self.N, 1, self.isplt, dist2)  # 绘制提取后直方图
         # extractor.plotting.plot_data(dist, 14)
         self.runtime = end - start
         print('Running time: %.4f Seconds\n' % self.runtime)

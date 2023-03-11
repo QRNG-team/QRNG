@@ -15,7 +15,7 @@ from UI import *
 from extractor import mainextractor, ottoeplitz
 from extractor.mainextractor import Extractor
 from UI.Thread import *
-from UI import extractorset, detectionset, entropyset
+from UI import extractorset, detectionset, entropyset, showset
 import Tool.glo as glo
 
 
@@ -25,6 +25,8 @@ class Ui_MainWindow(object):
     """
 
     def __init__(self):
+        self.showpaths = None  # 展示文件路径集合
+        self.isplt = None  # 展示选择
         self.thread = None
         self.thread_1 = None
         self.N = 0
@@ -275,9 +277,11 @@ class Ui_MainWindow(object):
         self.rundetection.triggered.connect(self.runDetection)
         self.runaccess.setShortcut('Ctrl+A')
         self.runaccess.triggered.connect(self.runAccess)
+        self.show.triggered.connect(self.showplt)
         self.extractorset.triggered.connect(self.extractorSet)
         self.detectionset.triggered.connect(self.detectionSet)
         self.entropyset.triggered.connect(self.entropySet)
+        self.showset.triggered.connect(self.showSet)
 
         glo._init()  # 先必须在主模块初始化（只在Main模块需要一次即可）
         # 定义跨模块全局变量
@@ -318,7 +322,6 @@ class Ui_MainWindow(object):
             self.LogBrowser.append(f"已成功导入待提取文件：{fname[0]}")
         self.fername = fname[0]
         self.filename = "extract"
-
 
     def openDetectionFile(self):
         fname = QtWidgets.QFileDialog.getOpenFileName(None, 'open', '.\\', "Images (*.png *.csv *txt *.jpg)")
@@ -392,6 +395,40 @@ class Ui_MainWindow(object):
         self.LogBrowser.append(f"已选择熵评估种类为{entropyAns}")
         self.LogBrowser.append(f"所选择的熵参数为{paraAns}")
 
+    def showSet(self):  # 评估设置窗口
+        self.showwin = showset.Ui_showwin()
+        # 连接信号
+        self.showwin.signal.connect(self.getshowwin)
+        self.showwin.show()
+
+    def getshowwin(self, isplt, showpaths):  # 评估设置窗口
+        self.isplt = isplt
+        self.showpaths = showpaths
+        self.LogBrowser.append(f"完成结果展示设置")
+
+    def showplt(self):
+        self.scale = 2 ** 18 + 20000
+        if self.isplt is 0:
+            self.ResultBrowser.append(f"当前不可用随机数频率分布展示")
+        elif self.isplt is 1:
+            self.ResultBrowser.append(f"请使用随机数提取功能进行随机数频率分布展示")
+        elif self.isplt is 2:
+            self.LogBrowser.append(f"正在进行提取前后的随机数频率分布展示")
+            self.LogBrowser.append(f"提取前随机数文件路径为{self.showpaths['input_beforefile']}")
+            self.LogBrowser.append(f"提取后随机数文件路径为{self.showpaths['input_afterfile']}")
+            self.LogBrowser.append(f"输出随机数频率分布图像路径为{self.showpaths['output_file']}")
+            para = {"fername": self.showpaths['input_beforefile'], "fewname": self.showpaths['input_afterfile'],
+                    "scale": self.scale, "N": self.N,
+                    "fdrname": self.fdrname, "fdwname": self.fdwname, "filename": self.showpaths['output_file'],
+                    "isplt": self.isplt}
+            ex = Extractor(para)
+            print(para)
+            input1 = ex.file_to_array(self.showpaths['input_beforefile'],self.scale)
+            input2 = ex.file_to_array(self.showpaths['input_afterfile'], self.scale)
+            print(input1)
+            ex.plot_data(self.N, 0, self.isplt, input1)
+            ex.plot_data(self.N, 1, self.isplt, input2)
+
     def getExtractFolder(self):
         self.fewname = QtWidgets.QFileDialog.getExistingDirectory()
         if len(self.fewname):
@@ -423,8 +460,8 @@ class Ui_MainWindow(object):
         self.scale = 2 ** 18 + 20000
         self.N = 14  # 实验数据类型
         para = {"fername": self.fername, "fewname": self.fewname, "scale": self.scale, "N": self.N,
-                "fdrname": self.fdrname, "fdwname": self.fdwname,
-                "filename": self.filename}
+                "fdrname": self.fdrname, "fdwname": self.fdwname, "filename": self.filename,
+                "isplt": self.isplt}
         print('Start clicked.')
         glo.set_value('extractbar', 0)  # 进度条进度设置，采用跨文件全部变量
         self.runextract.setEnabled(False)
@@ -451,12 +488,12 @@ class Ui_MainWindow(object):
         self.N = 14  # 实验数据类型
         para = {"fername": self.fername, "fewname": self.fewname, "scale": self.scale, "N": self.N,
                 "fdrname": self.fdrname, "fdwname": self.fdwname,
-                "filename": self.filename}
+                "filename": self.filename, "isplt": self.isplt}
         if self.standard:
             self.LogBrowser.append('正在使用 NIST SP800-22r1a随机数检测标准 对随机数文件进行检测')
             print('Start clicked.')
             glo.set_value('detectbar', 0)
-            self.rundetection.setEnabled(False) #控件不可交互
+            self.rundetection.setEnabled(False)  # 控件不可交互
             self.createProgressBar()
             self.is_done = 0  # 设置完成标记 完成/未完成 1/0
             self.thread_1 = Runthread(2)
@@ -471,7 +508,7 @@ class Ui_MainWindow(object):
             self.LogBrowser.append('正在使用 国密GM/T 0005-2021随机数检测标准 对随机数文件进行检测')
             print('Start clicked.')
             glo.set_value('detectbar2', 0)
-            self.rundetection.setEnabled(False)   #控件不可交互
+            self.rundetection.setEnabled(False)  # 控件不可交互
             self.createProgressBar()
             self.is_done = 0  # 设置完成标记 完成/未完成 1/0
             self.thread_1 = Runthread(4)
