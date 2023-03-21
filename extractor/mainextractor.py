@@ -1,7 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import random
+
+from PyQt5.QtWidgets import QFileDialog
+
 import extractor.ottoeplitz
+import extractor.image
 import time
 import sys
 import os
@@ -51,14 +55,15 @@ class Extractor:
 
     """
 
-    def plot_data(self, n, flag, isplt, inputdata):
+    def plot_data(self, flag, isplt, inputdata):
         """ Bins up data and plots. """
         self.t = extractor.ottoeplitz.Toeplitz(inputdata, self.N)  # 生成toeplitz矩阵
         N, data = self.t._calculate_N()
-        binned_data, bins = np.histogram(data, bins=2 ** n - 1)
+        print(self.N,data)
+        binned_data, bins = np.histogram(data, bins=2 ** self.N - 1)
         data_digital = np.digitize(data, bins, right=True)
         fig, ax = plt.subplots()
-        ax.hist(data_digital, bins=2 ** n - 1, label='Digitized Raw Data')
+        ax.hist(data_digital, bins=2 ** self.N - 1, label='Digitized Raw Data')
         plt.xlabel('Random numbers')
         plt.ylabel('Frequency')
         if flag:
@@ -73,15 +78,16 @@ class Extractor:
                 plt.savefig(f'{self.fewname}/before_extract.png')
             else:
                 plt.savefig(f'{self.filename}/before_extract.png')
-        plt.show()
         return
 
     def file_to_array(self, fname, scale):
         input = []
-        print(scale)
-        with open(f'{fname}', mode='r') as fdata:
+        with open(f'{fname}', mode='r', encoding='utf-8') as fdata:
             for i in range(scale):
-                input.append(int(fdata.readline()))
+                try:
+                    input.append(int(fdata.readline()))
+                except ValueError as e:
+                    pass
         return np.array(input)
 
     def extract(self):
@@ -90,23 +96,28 @@ class Extractor:
         #     temp = random.gauss(5, .05)  #gauss() 是内置的方法random模块。它用于返回具有高斯分布的随机浮点数。
         #     inputdata.append(temp)
         self.t = extractor.ottoeplitz.Toeplitz(inputdata, self.N)  # 生成toeplitz矩阵
-        start = self.get_time()  # 程序运行时间计时
+        print(inputdata)
         if self.isplt == 1:
-            self.plt1 = self.plot_data(self.N, 0, self.isplt, inputdata)  # 绘制提取前直方图
+            self.plt1 = self.plot_data(0, self.isplt, inputdata)  # 绘制提取前直方图
+            start = self.get_time()  # 程序运行时间计时
             dist1, dist2 = self.t.hash(1)  # 利用toeplitz后提取,参数为是否将二进制转换为十进制，0为不转换
+            end = self.get_time()
             output1 = open(f'{self.fewname}/{self.filename}-decimal：{self.scale}.txt', 'w')
-            for i in range(len(dist2)-1):
-                output1.write(f"{str(dist2[i])}\n")
-            self.plt2 = self.plot_data(self.N, 1, self.isplt, dist2)  # 绘制提取前直方图
-        else:
+            for i in range(len(dist2) - 1):
+                output1.write(f"{int(dist2[i])}\n")
+            # self.plt2 = self.plot_data(self.N, 1, self.isplt, dist2)  # 绘制提取前直方图
+        elif self.isplt == 0:
+            start = self.get_time()  # 程序运行时间计时
             dist1, dist2 = self.t.hash(0)  # 利用toeplitz后提取,参数为是否将二进制转换为十进制，0为不转换
-        end = self.get_time()
+            end = self.get_time()
         dist = ''
+        min_ent = self.t.min_ent
+        print(self.t.min_ent)
         for subdist in dist1:
             x = str(int(subdist))
             dist += x
         if self.isplt == 1:
-            self.plt2 = self.plot_data(self.N, 1, self.isplt, dist2)  # 绘制提取后直方图
+            self.plt2 = self.plot_data(1, self.isplt, dist2)  # 绘制提取后直方图
         # extractor.plotting.plot_data(dist, 14)
         self.runtime = end - start
         print('Running time: %.4f Seconds\n' % self.runtime)
@@ -114,11 +125,11 @@ class Extractor:
         output = open(f'{self.fewname}/{self.filename}-后提取结果-数据：{self.scale}.txt', 'w')
         output.write(dist)
         outpara = open(f'{self.fewname}/{self.filename}-后提取结果-参数：{self.scale}.txt', 'w')
-        outpara.write('原始数据最小熵为： %.2f \n' % self.t.min_ent)
+        outpara.write('原始数据最小熵为： %.2f \n' % min_ent)
         outpara.write('提取运行时间: %.4f Seconds\n' % self.runtime)
         self.extractspeed = self.length / (self.runtime * 1000)
         outpara.write('提取速度: %.2f kbps\n' % self.extractspeed)
-        return [self.t.min_ent, self.runtime, self.extractspeed]
+        return [min_ent, self.runtime, self.extractspeed]
 
         # 检测
 

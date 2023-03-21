@@ -102,6 +102,28 @@ class Access_Thread(QThread):
         self.finishSignal.emit(
             accessresult)  # 注意这里与_signal = pyqtSignal(str)中的类型相同
 
+class Image_Thread(QThread):
+    # 自定义信号声明
+    # 使用自定义信号和UI主线程通讯，参数是发送信号时附带参数的数据类型，可以是str、int、list等
+
+    finishSignal = pyqtSignal(list)
+
+    # 带一个参数t
+    def __init__(self, para, parent=None):
+        super(Image_Thread, self).__init__(parent)
+        self.para = para
+
+    # run函数是子线程中的操作，线程启动后开始执行
+    def run(self):
+        ex = Extractor(self.para)
+        print(self.para)
+        input1 = ex.file_to_array(self.para['fername'], self.para['scale'])
+        input2 = ex.file_to_array(self.para['fewname'], self.para['scale'])
+        ex.plot_data(0, 2, input1)
+        glo.set_value("imagebar",1)
+        ex.plot_data(1, 2, input2)
+        glo.set_value("imagebar",2)
+
 
 # Runthread子线程
 class Runthread(QThread):
@@ -150,5 +172,15 @@ class Runthread(QThread):
                 if num3 == 15:
                     break
                 time.sleep(0.2)
+            self.signal_done.emit(1)  # 发送结束信号
+
+        if self.flag == 5:  # 负责生成图片进度条
+            while True:
+                num4 = glo.get_value('imagebar')
+                n = (num4 / 2) * 100
+                self.progressBarValue.emit(n)  # 发送进度条的值信号
+                if num4 == 2:
+                    break
+                time.sleep(1)
             self.signal_done.emit(1)  # 发送结束信号
 
