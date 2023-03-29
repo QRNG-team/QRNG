@@ -31,7 +31,7 @@ class Ui_MainWindow(object):
         self.thread = None
         self.thread_1 = None
         self.N = 0
-        self.scale = 0
+        self.scale = 2 ** 18 + 20000
         self.fername = None  # 待提取文件
         self.fewname = None  # 提取结果文件
         self.filename = None  # 文件
@@ -42,7 +42,6 @@ class Ui_MainWindow(object):
         self.entropylist = [0, 0, 0, 0]
         self.entropypara = [0, 0, 0]
         self.standard = True
-        self.countEntropy = 0
         self.extractlist = [0, 0, 0, 0]
         # 一定要在主窗口类的初始化函数中对子窗口进行实例化，如果在其他函数中实例化子窗口
         # 可能会出现子窗口闪退的问题
@@ -340,14 +339,19 @@ class Ui_MainWindow(object):
         self.filename = "Access"
 
     def extractorSet(self):  # 提取设置窗口
-        self.exwin = extractorset.Ui_exwin(self.extractlist, self.countEntropy)
+        self.exwin = extractorset.Ui_exwin(self.scale)
         # 连接信号
         self.exwin.signal.connect(self.getexwin)
         self.exwin.show()
 
-    def getexwin(self, lst, para):  # 接收提取设置和熵评估计算设置
-        self.extractlist = lst
-        self.countEntropy = para
+    def getexwin(self, para):  # 接收提取设置和熵评估计算设置
+        if para == -1:
+            self.LogBrowser.append(f"已完成随机数提取设置,提取规模默认为2^18")
+        else:
+            print("*",para)
+            self.scale = para
+            self.LogBrowser.append(f"已完成随机数提取设置")
+            self.LogBrowser.append(f"随机数提取规模为{self.scale}")
 
     def detectionSet(self):  # 检测设置窗口
         # 连接信号
@@ -475,7 +479,6 @@ class Ui_MainWindow(object):
             self.LogBrowser.append(f"输出提取结果文件路径不能为空")
             return
         self.LogBrowser.append(f"正在提取{self.fername}")
-        self.scale = 2 ** 18 + 20000
         self.N = 14  # 实验数据类型
         para = {"fername": self.fername, "fewname": self.fewname, "scale": self.scale, "N": self.N,
                 "fdrname": self.fdrname, "fdwname": self.fdwname, "filename": self.filename,
@@ -502,7 +505,6 @@ class Ui_MainWindow(object):
             self.LogBrowser.append(f"输出检测结果文件路径不能为空")
             return
         self.LogBrowser.append(f"正在检测{self.fdrname}")
-        self.scale = 2 ** 18 + 20000
         self.N = 14  # 实验数据类型
         para = {"fername": self.fername, "fewname": self.fewname, "scale": self.scale, "N": self.N,
                 "fdrname": self.fdrname, "fdwname": self.fdwname,

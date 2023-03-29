@@ -63,7 +63,7 @@
        <string>FFT</string>
       </property>
       <property name="checked">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -82,7 +82,7 @@
        <string>GPU</string>
       </property>
       <property name="checked">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -98,7 +98,7 @@
        <string>Pipline</string>
       </property>
       <property name="checked">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -126,9 +126,9 @@
   <widget class="QWidget" name="horizontalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>50</x>
+     <x>27</x>
      <y>40</y>
-     <width>251</width>
+     <width>301</width>
      <height>28</height>
     </rect>
    </property>
@@ -142,7 +142,7 @@
        </font>
       </property>
       <property name="text">
-       <string>当前最小熵</string>
+       <string>随机数提取规模</string>
       </property>
      </widget>
     </item>
@@ -156,12 +156,12 @@
       </property>
       <item>
        <property name="text">
-        <string>根据原始数据计算</string>
+        <string>自定义</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>固定值</string>
+        <string>默认值</string>
        </property>
       </item>
      </widget>
@@ -179,6 +179,16 @@
    </property>
    <property name="standardButtons">
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="scaleedit">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>80</y>
+     <width>121</width>
+     <height>21</height>
+    </rect>
    </property>
   </widget>
  </widget>
